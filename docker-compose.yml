@@ -1,0 +1,33 @@
+services:
+  backend:
+    container_name: loopquest-backend
+    image: loopquest-backend
+    build:
+      context: .
+      dockerfile: Dockerfile.backend.dev
+    # NOTE: This should only be used for development.
+    # For production, don't copy the source code into the container.
+    volumes:
+      - ./backend/src:/backend
+      - ./loopquest:/sdk/loopquest
+      - media_store:/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: loopquest-mongodb
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - db:/data/db
+
+volumes:
+  db:
+  media_store:
