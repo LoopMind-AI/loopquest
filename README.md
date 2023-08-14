@@ -24,3 +24,15 @@ Bring up the frontend web app,
 cd frontend
 npm run dev
 ```
+
+Test if everything works,
+
+```
+pytest tests
+```
+
+The command prompt should mention check your experiment results on
+
+```
+http://localhost:3000/experiment/<exp_id>
+```
