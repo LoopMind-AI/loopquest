@@ -134,7 +134,6 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         elif self.render_mode == "rgb_array":
             rgb_array = self.env.render()
             step = upload_rgb_as_image(self.backend_url, self.step_id, rgb_array)
-            print(f"uploaded image, step updated: {step}")
             return rgb_array
         elif self.render_mode == "rgb_array_list":
             rgb_array_list = self.env.render()
