@@ -1,5 +1,6 @@
 import { Experiment } from "@/types/experiment";
 import ExperimentWorkspace from "@/components/experiment_workspace";
+import { GetServerSidePropsContext } from "next";
 
 export default function ExperimentPage({ exp }: { exp: Experiment | null }) {
   return (
@@ -23,16 +24,20 @@ export default function ExperimentPage({ exp }: { exp: Experiment | null }) {
   );
 }
 
-import { GetServerSidePropsContext } from "next";
-
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (process.env.BACKEND_URL === undefined) {
     return {
       props: { exp: null },
     };
   }
-  const { id } = context.params;
-  const res = await fetch(`${process.env.BACKEND_URL}/exp/${id}`);
+  const id = context.params?.id;
+  if (id === undefined) {
+    return {
+      props: { exp: null },
+    };
+  }
+  const url = `${process.env.BACKEND_URL}/exp/${id}`;
+  const res = await fetch(url);
   if (!res.ok) {
     return {
       props: { exp: null },
