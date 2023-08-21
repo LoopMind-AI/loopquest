@@ -1,13 +1,31 @@
 services:
+  frontend:
+    container_name: loopquest-frontend
+    image: loopquest-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    volumes:
+      - ./frontend:/frontend
+      # - node_modules:/frontend/node_modules
+      - /frontend/node_modules
+      - next:/frontend/.next
+    depends_on:
+      - backend
+
   backend:
     container_name: loopquest-backend
     image: loopquest-backend
     build:
       context: .
       dockerfile: Dockerfile.backend.dev
-    # NOTE: This should only be used for development.
-    # For production, don't copy the source code into the container.
     volumes:
+      # NOTE: This should only be used for development.
+      # For production, don't copy the source code into the container.
       - ./backend/src:/backend
       - ./loopquest:/sdk/loopquest
       - media_store:/media
@@ -31,3 +49,4 @@ services:
 volumes:
   db:
   media_store:
+  next:
