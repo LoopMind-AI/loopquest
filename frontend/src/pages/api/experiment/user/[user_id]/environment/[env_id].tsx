@@ -11,7 +11,7 @@ export default async function handler(
       req,
       res,
       process.env.BACKEND_URL as string,
-      `/experiment/user/${user_id}/environment/${env_id}`
+      `/exp/user/${user_id}/env/${env_id}`
     );
   } else {
     return res.status(405).json({ message: "Method not allowed" });

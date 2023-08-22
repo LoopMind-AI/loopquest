@@ -19,12 +19,6 @@ export default function ExperimentTable({
 }) {
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [loadingExperiments, setLoadingExperiments] = useState(false);
-  const [expCurrentStep, setExpCurrentStep] = useState<{
-    [key: string]: number;
-  }>({});
-  // This state is used to trigger a refresh of the experiment table when a
-  // experiment is finished.
-  const [expFinishedSignal, setExpFinishedSignal] = useState(false);
 
   const onRefresh = useCallback(() => {
     setLoadingExperiments(true);
@@ -39,45 +33,13 @@ export default function ExperimentTable({
 
   useEffect(() => {
     onRefresh();
-  }, [onRefresh, fetchExperiments, expFinishedSignal]);
+  }, [onRefresh, fetchExperiments]);
 
   const status_to_badge: { [key: string]: string } = {
     running: "badge-info",
     finished: "badge-success",
     pending: "badge-warning",
     failed: "badge-error",
-  };
-
-  const onRun = () => {
-    checkedExps.forEach((exp) => {
-      if (exp.status !== "pending") {
-        return;
-      }
-      const eventSource = new EventSource(
-        `/api/experiment/${exp.id}/run?stream_image=false`
-      );
-      eventSource.onmessage = (event) => {
-        if (
-          event.data === "FINISHED" ||
-          event.data === "TERMINATED" ||
-          event.data === "TRUNCATED"
-        ) {
-          eventSource.close();
-          setExpCurrentStep((prev) => {
-            delete prev[exp.id];
-            return prev;
-          });
-          // Trigger the refresh of the experiment table.
-          setExpFinishedSignal((prev) => !prev);
-          return;
-        }
-        const currentStep = parseInt(event.data);
-        setExpCurrentStep((prev) => ({
-          ...prev,
-          [exp.id]: currentStep,
-        }));
-      };
-    });
   };
 
   return (
@@ -148,32 +110,14 @@ export default function ExperimentTable({
                       {exp.update_time ? formatDateTime(exp.update_time) : ""}
                     </td>
                     <td>
-                      {expCurrentStep[exp.id] ? (
-                        <div>
-                          <p>
-                            Step <b>{expCurrentStep[exp.id]}</b> /{" "}
-                            {exp.num_steps}
-                          </p>
-                          <progress
-                            className="progress w-56"
-                            value={
-                              exp.num_steps === undefined || exp.num_steps === 0
-                                ? 0
-                                : (expCurrentStep[exp.id] / exp.num_steps) * 100
-                            }
-                            max="100"
-                          ></progress>
-                        </div>
-                      ) : (
-                        <div
-                          className={
-                            "badge " +
-                            (exp.status ? status_to_badge[exp.status] : "")
-                          }
-                        >
-                          {exp.status}
-                        </div>
-                      )}
+                      <div
+                        className={
+                          "badge " +
+                          (exp.status ? status_to_badge[exp.status] : "")
+                        }
+                      >
+                        {exp.status}
+                      </div>
                     </td>
                     <td>
                       {exp.error_message ? (
@@ -198,19 +142,6 @@ export default function ExperimentTable({
             </tbody>
           </table>
         </div>
-        {checkedExps.reduce(
-          (has_pending, exp) => has_pending || exp.status === "pending",
-          false
-        ) ? (
-          <div className="card-actions justify-end">
-            <button
-              className="btn btn-primary normal-case text-lg"
-              onClick={onRun}
-            >
-              Run
-            </button>
-          </div>
-        ) : null}
       </div>
     </div>
   );

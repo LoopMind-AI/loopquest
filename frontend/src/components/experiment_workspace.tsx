@@ -11,7 +11,6 @@ export default function ExperimentWorkspace({
   exp: Experiment | null;
   compExps: Experiment[];
 }) {
-  const exps = exp ? [exp, ...compExps] : [];
   return (
     <div>
       {exp ? (
@@ -20,20 +19,20 @@ export default function ExperimentWorkspace({
             <div className="card w-full h-full max-auto shadow bg-base-100">
               <div className="card-body">
                 <ExperimentSxsTable
-                  experiments={exps}
+                  experiments={compExps}
                   current_exp_id={exp.id}
                 />
               </div>
             </div>
           </div>
           <div className="col-start-2 p-4">
-            <MetricCard exp_ids={exps.map((exp) => exp.id)} />
+            <MetricCard exps={compExps} />
           </div>
           <div className="p-4">
-            <SimulationReplayer exp_id={exp.id} />
+            <SimulationReplayer exps={compExps} />
           </div>
           <div className="p-4">
-            <VariableMonitor env_id={exp.environment_id} exps={exps} />
+            <VariableMonitor env_id={exp.environment_id} exps={compExps} />
           </div>
         </div>
       ) : (
