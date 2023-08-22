@@ -33,6 +33,12 @@ async def create_experiment(request: Request, experiment: schema.ExperimentCreat
                 raise e
 
 
+@api_router.get("/all", response_model=list[schema.Experiment])
+async def get_all_experiments(request: Request):
+    exps = await db_get_all_experiments(request.app.db)
+    return exps
+
+
 @api_router.get("/{id}", response_model=schema.Experiment)
 async def read_experiment(request: Request, id: str):
     env = await db_get_experiment(request.app.db, id)
@@ -56,4 +62,10 @@ async def delete_experiment(request: Request, id: str):
 @api_router.get("/user/{user_id}/env/{env_id}", response_model=list[schema.Experiment])
 async def get_experiment_by_user_env(request: Request, user_id: str, env_id: str):
     exps = await db_get_experiment_by_user_env(request.app.db, user_id, env_id)
+    return exps
+
+
+@api_router.get("/user/{user_id}", response_model=list[schema.Experiment])
+async def get_experiment_by_user(request: Request, user_id: str):
+    exps = await db_get_experiment_by_user(request.app.db, user_id)
     return exps
