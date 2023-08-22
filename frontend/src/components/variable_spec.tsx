@@ -8,7 +8,7 @@ interface Props {
 
 export default function VariableSpec(props: Props) {
   return (
-    <div className="card flex-shrink-0 max-w bg-base-100 m-5">
+    <div className="card flex-shrink-0 max-w bg-base-100 m-3">
       <div className="card-body">
         <h2 className="card-title">{props.title}</h2>
         {props.specs?.map((spec, i) => (
