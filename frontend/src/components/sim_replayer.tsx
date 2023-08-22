@@ -8,9 +8,11 @@ export default function SimulationReplayer({ exps }: { exps: Experiment[] }) {
     <div className="card bg-base-100">
       <div className="card-body">
         <h2 className="card-title">Simulation Replayer</h2>
-        {exps.map((exp) => (
-          <StepwiseReplayer key={exp.id} exp={exp} />
-        ))}
+        <div className="flex justify-center">
+          {exps.map((exp) => (
+            <StepwiseReplayer key={exp.id} exp={exp} />
+          ))}
+        </div>
       </div>
     </div>
   );

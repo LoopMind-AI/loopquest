@@ -47,3 +47,15 @@ async def db_get_experiment_by_user_env(db, user_id: str, env_id: str):
     collection = await get_experiment_collection(db)
     exps = collection.find({"user_id": user_id, "environment_id": env_id})
     return [schema.Experiment(**exp) async for exp in exps]
+
+
+async def db_get_experiment_by_user(db, user_id: str):
+    collection = await get_experiment_collection(db)
+    exps = collection.find({"user_id": user_id})
+    return [schema.Experiment(**exp) async for exp in exps]
+
+
+async def db_get_all_experiments(db):
+    collection = await get_experiment_collection(db)
+    exps = collection.find({})
+    return [schema.Experiment(**exp) async for exp in exps]
