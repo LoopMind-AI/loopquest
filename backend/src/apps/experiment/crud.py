@@ -41,3 +41,9 @@ async def db_delete_experiment(db, id: str):
     exp = await db_get_experiment(db, id)
     collection = await get_experiment_collection(db)
     await collection.delete_one({"id": exp.id})
+
+
+async def db_get_experiment_by_user_env(db, user_id: str, env_id: str):
+    collection = await get_experiment_collection(db)
+    exps = collection.find({"user_id": user_id, "environment_id": env_id})
+    return [schema.Experiment(**exp) async for exp in exps]

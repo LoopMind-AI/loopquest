@@ -51,3 +51,9 @@ async def update_experiment(
 async def delete_experiment(request: Request, id: str):
     await db_delete_experiment(request.app.db, id)
     return {"message": "Experiment deleted successfully"}
+
+
+@api_router.get("/user/{user_id}/env/{env_id}", response_model=list[schema.Experiment])
+async def get_experiment_by_user_env(request: Request, user_id: str, env_id: str):
+    exps = await db_get_experiment_by_user_env(request.app.db, user_id, env_id)
+    return exps
