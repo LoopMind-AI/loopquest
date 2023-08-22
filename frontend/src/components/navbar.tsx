@@ -19,9 +19,6 @@ export default function Navbar() {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/environments">Environments</Link>
-          </li>
-          <li>
             <Link href="/datasets">Datasets</Link>
           </li>
           <li>

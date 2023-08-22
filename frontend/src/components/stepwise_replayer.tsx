@@ -48,7 +48,7 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
   }, [episode, step]);
 
   return (
-    <div className="card h-full max-auto bg-base-100 bordered">
+    <div className="card h-full max-auto bg-base-100 bordered m-3">
       <div className="card-body">
         <h2 className="card-title">
           {exp.name}

@@ -12,11 +12,11 @@ export default function ExperimentWorkspace({
   compExps: Experiment[];
 }) {
   return (
-    <div>
+    <div className="">
       {exp ? (
-        <div className="grid grid-col-2">
-          <div className="p-4">
-            <div className="card w-full h-full max-auto shadow bg-base-100">
+        <div className="w-full max-auto grid grid-col-2">
+          <div className="p-2">
+            <div className="card shadow bg-base-100">
               <div className="card-body">
                 <ExperimentSxsTable
                   experiments={compExps}
@@ -25,13 +25,13 @@ export default function ExperimentWorkspace({
               </div>
             </div>
           </div>
-          <div className="col-start-2 p-4">
+          <div className="col-start-2 p-2">
             <MetricCard exps={compExps} />
           </div>
-          <div className="p-4">
+          <div className="p-2 col-span-2">
             <SimulationReplayer exps={compExps} />
           </div>
-          <div className="p-4">
+          <div className="p-2 col-span-2">
             <VariableMonitor env_id={exp.environment_id} exps={compExps} />
           </div>
         </div>

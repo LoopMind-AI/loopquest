@@ -5,6 +5,7 @@ import EnvironmentCard from "@/components/environment_card";
 import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import ExperimentTable from "@/components/experiment_table";
+import Link from "next/link";
 
 export default function ExperimentPage({
   exp,
@@ -13,7 +14,7 @@ export default function ExperimentPage({
   exp: Experiment | null;
   env: Environment | null;
 }) {
-  const [activeTab, setActiveTab] = useState("Workspace");
+  const [activeTab, setActiveTab] = useState("Dashboard");
   const [checkedExps, setCheckedExps] = useState<Experiment[]>(
     exp ? [exp] : []
   );
@@ -21,8 +22,27 @@ export default function ExperimentPage({
   return (
     <div className="drawer drawer-open">
       <input id="left-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col items-center justify-center">
-        <div style={{ display: activeTab === "Workspace" ? "block" : "none" }}>
+      <div className="drawer-content flex flex-col m-4">
+        <div style={{ display: activeTab === "Dashboard" ? "block" : "none" }}>
+          <div className="flex justify-between m-2">
+            <div className="breadcrumbs">
+              <ul>
+                <li>
+                  <Link href="/">Home</Link>
+                </li>
+                <li>
+                  <a>{exp?.environment_id}</a>
+                </li>
+                <li>{exp?.name}</li>
+              </ul>
+            </div>
+            <button
+              className="btn btn-primary"
+              onClick={() => setActiveTab("Experiments")}
+            >
+              Compare
+            </button>
+          </div>
           <ExperimentWorkspace exp={exp} compExps={checkedExps} />
         </div>
         <div style={{ display: activeTab === "EnvInfo" ? "block" : "none" }}>
@@ -32,13 +52,26 @@ export default function ExperimentPage({
           style={{ display: activeTab === "Experiments" ? "block" : "none" }}
         >
           {exp ? (
-            <ExperimentTable
-              user_id={exp.user_id}
-              env_id={exp.environment_id}
-              checkedExps={checkedExps}
-              setCheckedExps={setCheckedExps}
-              fetchExperiments={true}
-            />
+            <div className="card bg-base-100">
+              <div className="card-body">
+                <ExperimentTable
+                  user_id={exp.user_id}
+                  env_id={exp.environment_id}
+                  checkedExps={checkedExps}
+                  setCheckedExps={setCheckedExps}
+                  fetchExperiments={false}
+                />
+
+                <div className="card-actions justfiy-end">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setActiveTab("Dashboard")}
+                  >
+                    Compare
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : null}
         </div>
       </div>
@@ -46,13 +79,30 @@ export default function ExperimentPage({
         <label htmlFor="left-drawer" className="drawer-overlay"></label>
         <ul className="menu p-2 w-60 h-full bg-base-100 text-lg">
           <li>
-            <a onClick={() => setActiveTab("Workspace")}>Workspace</a>
+            <a
+              onClick={() => setActiveTab("Dashboard")}
+              className={activeTab === "Dashboard" ? "btn-neutral rounded" : ""}
+            >
+              Dashboard
+            </a>
           </li>
           <li>
-            <a onClick={() => setActiveTab("Experiments")}>Experiments</a>
+            <a
+              className={
+                activeTab === "Experiments" ? "btn-neutral rounded" : ""
+              }
+              onClick={() => setActiveTab("Experiments")}
+            >
+              Experiments
+            </a>
           </li>
           <li>
-            <a onClick={() => setActiveTab("EnvInfo")}>Environment Info</a>
+            <a
+              className={activeTab === "EnvInfo" ? "btn-neutral rounded" : ""}
+              onClick={() => setActiveTab("EnvInfo")}
+            >
+              Environment Info
+            </a>
           </li>
         </ul>
       </div>
