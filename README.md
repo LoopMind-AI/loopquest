@@ -24,9 +24,15 @@ env = LoopquestGymWrapper(
 - (Coming Soon) Compare your experiments in an intuitive way.
 - (Coming Soon) Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis).
 
-# Installation (dev only for now)
+# Installation
 
-Clone the git to your local machine by running
+For stable version, run
+
+```
+pip install loopquest
+```
+
+For dev version or loopquest project contributors, clone the git to your local machine by running
 
 ```
 git clone https://github.com/LoopMind-AI/loopquest.git
