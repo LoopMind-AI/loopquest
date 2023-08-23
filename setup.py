@@ -10,14 +10,18 @@ def parse_requirements(filename):
 
 reqs = parse_requirements("requirements.txt")
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name="loopquest",
-    version="0.1.0",
-    description="",
+    version="0.1.1",
+    description="A Production Tool for Embodied AI.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="LoopMind",
     author_email="contactus@loopmind.ai",
-    url="",
+    url="https://github.com/LoopMind-AI/loopquest",
     packages=["loopquest"],
     install_requires=reqs,
     classifiers=[
