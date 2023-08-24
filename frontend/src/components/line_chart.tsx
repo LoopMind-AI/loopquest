@@ -29,6 +29,7 @@ export default function LineChart({ line_data }: { line_data: VariableData }) {
   }, 0);
   const commonOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
@@ -75,7 +76,7 @@ export default function LineChart({ line_data }: { line_data: VariableData }) {
     datasets: datasets,
   };
   return (
-    <div>
+    <div className="h-72 w-3/4">
       <Line data={chart_data} options={commonOptions} />
     </div>
   );

@@ -9,7 +9,7 @@ from .schema import (
 
 # NOTE: the current requests are not async, which could be a performance bottle neck.
 import requests
-from .utils import rgb_array_to_image_bytes
+from .utils import rgb_array_to_image_bytes, replace_special_chars_with_dash
 import numpy as np
 import gymnasium
 
@@ -36,7 +36,7 @@ def construct_environment_info(env: gymnasium.Env, user_id: str):
         )
     ]
     return EnvironmentCreate(
-        id=env.spec.id,
+        id=replace_special_chars_with_dash(env.spec.id),
         name=env.spec.id,
         gym_id=env.spec.id,
         user_id=user_id,
@@ -56,6 +56,7 @@ def create_environment(backend_url: str, env: gymnasium.Env, user_id: str) -> st
 
 
 def get_environment(backend_url: str, id: str):
+    id = replace_special_chars_with_dash(id)
     response = requests.get(f"{backend_url}/env", params={"id": id})
     response.raise_for_status()
     environment = response.json()
