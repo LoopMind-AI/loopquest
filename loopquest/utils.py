@@ -5,6 +5,7 @@ import pickle
 from gymnasium.spaces.utils import flatten
 import io
 from PIL import Image
+import re
 
 
 def cast_to_list(
@@ -48,3 +49,8 @@ def rgb_array_to_image_bytes(rgb_array: np.ndarray):
     image.save(image_bytes, format="JPEG")
     image_bytes.seek(0)
     return image_bytes
+
+
+def replace_special_chars_with_dash(s):
+    # Replace all non-alphanumeric characters with a dash
+    return re.sub(r"[^a-zA-Z0-9]", "-", s)
