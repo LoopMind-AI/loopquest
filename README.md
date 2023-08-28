@@ -1,7 +1,7 @@
 # :scroll:Loopquest
 
 A Production Tool for Embodied AI.
-![loopquest frontend](https://uc6becc3d1d5a2bb4384c799f976.previews.dropboxusercontent.com/p/thumb/AB_9SrHiikANblnwQn2HD86liqTa40fT3A5AQXtWW8mataHM8WQDxj33spLoAmGeD9fF7QuQB7P9U23Hbh5hOX9Z6HCDR6VgwAMwLhlDJVbPk1xyn3B3JGY89iWLidSvFi6bj8BGfQddddRQn5rSgjIzZDz64BTvze23h2jkyUJaaeaM6YkTjNNu0yKSZu4h9I_jWy39V9GHzL5-EebqO8IPekLHpI-HzolWZZwCakGSOpVbyYINtEJjd405lr-jh9NFIY3vV4RzCmyzT7EusePnJ-ITU8SuCbM7uiA00798WPqlJEQfYpm6N9MlsxuE8DsMw1bjKcc0IaRU-FrMl4akrXOneyiPXqCvw6oKsctX9A/p.png)
+![loopquest frontend](https://github.com/LoopMind-AI/loopquest/tree/main/screenshots/loopquest-screenshot.png)
 
 - :video_camera:[Tutorial Video](https://capture.dropbox.com/Nucp9ObLT63qDr2E)
 - :house:[Discord](https://discord.gg/FTnFYeSy9r)
@@ -23,7 +23,7 @@ env = LoopquestGymWrapper(
 ```
 
 - Beautiful frontend to visualize all the data and rendered images / videos of the simulation environment.
-- (Coming Soon) Compare your experiments in an intuitive way.
+- Compare your experiments in an intuitive way.
 - (Coming Soon) Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis).
 
 # Installation
