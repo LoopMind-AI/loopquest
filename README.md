@@ -1,7 +1,7 @@
 # :scroll:Loopquest
 
 A Production Tool for Embodied AI.
-![loopquest frontend](https://github.com/LoopMind-AI/loopquest/tree/main/screenshots/loopquest-screenshot.png)
+![loopquest frontend](screenshots/loopquest-screenshot.png)
 
 - :video_camera:[Tutorial Video](https://capture.dropbox.com/Nucp9ObLT63qDr2E)
 - :house:[Discord](https://discord.gg/FTnFYeSy9r)
