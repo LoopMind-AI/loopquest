@@ -24,7 +24,7 @@ env = LoopquestGymWrapper(
 
 - Beautiful frontend to visualize all the data and rendered images / videos of the simulation environment.
 - Compare your experiments in an intuitive way.
-- (Coming Soon) Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis).
+- Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis).
 
 # Installation
 
