@@ -76,15 +76,9 @@ The command prompt should mention "Check your experiment progress on `http://loc
 import gymnasium
 from loopquest.gym_wrappers import LoopquestGymWrapper
 
-frontend_url = "http://localhost:3000"
-backend_url = "http://localhost:8000"
-user_id = "dope_robotics_hacker"
-experiment_name = "a test"
+experiment_name = "test"
 env = LoopquestGymWrapper(
     gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array"),
-    frontend_url,
-    backend_url,
-    user_id,
     experiment_name,
 )
 obs, info = env.reset()

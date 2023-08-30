@@ -14,30 +14,31 @@ from .schema import (
     ExperimentStatus,
 )
 from .utils import jsonize_dict, cast_to_list, flatten_and_cast_to_list
+from .api import init, is_initialized, get_frontend_url, get_backend_url, get_user_id
 
 
 class LoopquestGymWrapper(gymnasium.Wrapper):
     def __init__(
         self,
         env: gymnasium.Env,
-        frontend_url: str,
-        backend_url: str,
-        user_id: str,
         experiment_name: str = "default",
         experiment_description: str = "",
     ):
         super().__init__(env)
+        if not is_initialized():
+            init()
         self.current_step = 0
         self.current_episode = None
         self.prev_observation = None
-        self.backend_url = backend_url
-        self.user_id = user_id
+        self.backend_url = get_backend_url()
+        self.user_id = get_user_id()
         try:
             env_id = get_environment(self.backend_url, self.env.spec.id)
         except:
             env_id = create_environment(self.backend_url, self.env, self.user_id)
 
-        self.exp_id = create_experiment(
+        self._env_id = env_id
+        self._exp_id = create_experiment(
             self.backend_url,
             ExperimentCreate(
                 environment_id=env_id,
@@ -46,10 +47,18 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
                 description=experiment_description,
             ),
         )
-        self.frontend_url = frontend_url
+        self.frontend_url = get_frontend_url()
         print(
             f"Check the experiment progress at: {self.frontend_url}/experiment/{self.exp_id}"
         )
+
+    @property
+    def exp_id(self):
+        return self._exp_id
+
+    @property
+    def cloud_env_id(self):
+        return self._env_id
 
     @property
     def step_id(self):
