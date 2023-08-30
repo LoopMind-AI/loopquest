@@ -78,6 +78,11 @@ async def get_step_rendered_image(
     return FileResponse(image_path, media_type="image/jpeg")
 
 
+@api_router.get("/exp/{exp_id}")
+async def get_experiment(request: Request, exp_id: str):
+    return await db_get_steps_by_experiment(request.app.db, exp_id)
+
+
 @api_router.get("/exp/{exp_id}/eps/{episode_id}/step/max")
 async def get_max_step(request: Request, exp_id: str, episode_id: int):
     return await db_get_max_step(request.app.db, exp_id, episode_id)

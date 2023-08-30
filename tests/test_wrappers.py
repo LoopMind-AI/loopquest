@@ -4,15 +4,9 @@ from loopquest.gym_wrappers import LoopquestGymWrapper
 
 def test_gymnasium_wrapper():
     name = "MountainCarContinuous-v0"
-    frontend_url = "http://localhost:3000"
-    backend_url = "http://localhost:8000"
-    user_id = "jinyuxie"
     experiment_name = "test"
     env = LoopquestGymWrapper(
         gymnasium.make(name, render_mode="rgb_array"),
-        frontend_url,
-        backend_url,
-        user_id,
         experiment_name,
     )
     obs, info = env.reset()
@@ -29,3 +23,7 @@ def test_gymnasium_wrapper():
             break
     env.close()
     assert True
+
+
+if __name__ == "__main__":
+    test_gymnasium_wrapper()

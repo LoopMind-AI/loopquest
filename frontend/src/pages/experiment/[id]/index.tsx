@@ -6,6 +6,7 @@ import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import ExperimentTable from "@/components/experiment_table";
 import Link from "next/link";
+import DatasetDownload from "@/components/dataset_download";
 
 export default function ExperimentPage({
   exp,
@@ -61,8 +62,8 @@ export default function ExperimentPage({
                   setCheckedExps={setCheckedExps}
                   fetchExperiments={false}
                 />
-
                 <div className="card-actions justfiy-end">
+                  <DatasetDownload checkedExps={checkedExps} />
                   <button
                     className="btn btn-primary"
                     onClick={() => setActiveTab("Dashboard")}

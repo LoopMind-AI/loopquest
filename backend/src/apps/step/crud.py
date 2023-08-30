@@ -155,3 +155,13 @@ async def db_get_reward(db, exp_id):
     )
     rewards = [res["reward"] async for res in results]
     return rewards
+
+
+async def db_get_steps_by_experiment(db, exp_id):
+    collection = await get_step_collection(db)
+    results = collection.find(
+        filter={"experiment_id": exp_id},
+        sort=list({"episode": 1, "step": 1}.items()),
+    )
+    steps = [schema.Step(**res) async for res in results]
+    return steps
