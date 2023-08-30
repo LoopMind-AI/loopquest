@@ -2,17 +2,34 @@ import Link from "next/link";
 import { Experiment } from "@/types/experiment";
 import { formatDateTime } from "@/utils/time";
 import { statusBadge } from "@/utils/status_badge";
+import { useMemo, useState } from "react";
+import DatasetDownload from "@/components/dataset_download";
 
 export default function Home({ exps }: { exps: Experiment[] }) {
+  const rowsPerPage = 10;
+  const [page, setPage] = useState(1);
+  const [checkedExps, setCheckedExps] = useState<Experiment[]>([]);
+  const displayExps = useMemo(() => {
+    return exps.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  }, [exps, page]);
+  console.log(exps.length);
+  const totalPages = useMemo(() => {
+    return Math.ceil(exps.length / rowsPerPage);
+  }, [exps]);
+  const pageNumbers = useMemo(() => {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }, [totalPages]);
+
   return (
     <div>
-      <div className="card h-full shadow bg-base-100 m-5">
+      <div className="card shadow bg-base-100 m-5 overflow-x-auto h-full">
         <div className="card-body">
           <h2 className="card-title">Experiments</h2>
           <table className="table table-pin-rows">
             {/* head */}
             <thead>
               <tr>
+                <th></th>
                 <th>Experiment ID</th>
                 <th>Experiment Name</th>
                 <th>Environment ID</th>
@@ -22,9 +39,30 @@ export default function Home({ exps }: { exps: Experiment[] }) {
               </tr>
             </thead>
             {/* body */}
-            {exps.map((exp) => (
+            {displayExps.map((exp) => (
               <tbody key={exp.id}>
                 <tr>
+                  <th>
+                    <label>
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        checked={checkedExps
+                          .map((exp) => exp.id)
+                          .includes(exp.id)}
+                        onChange={(event) => {
+                          const isChecked = event.target.checked;
+                          if (isChecked) {
+                            setCheckedExps([...checkedExps, exp]);
+                          } else {
+                            setCheckedExps(
+                              checkedExps.filter((key) => key.id !== exp.id)
+                            );
+                          }
+                        }}
+                      />
+                    </label>
+                  </th>
                   <td>
                     <Link href={`/experiment/${exp.id}`}>{exp.id}</Link>
                   </td>
@@ -49,6 +87,22 @@ export default function Home({ exps }: { exps: Experiment[] }) {
               </tbody>
             ))}
           </table>
+          <div className="join justify-center">
+            {pageNumbers.map((number) => (
+              <button
+                key={number}
+                className={
+                  "join-item btn" + (page === number ? " btn-active" : "")
+                }
+                onClick={() => setPage(number)}
+              >
+                {number}
+              </button>
+            ))}
+          </div>
+          <div className="card-actions justify-end">
+            <DatasetDownload checkedExps={checkedExps} />
+          </div>
         </div>
       </div>
     </div>

@@ -12,6 +12,8 @@ import requests
 from .utils import rgb_array_to_image_bytes, replace_special_chars_with_dash
 import numpy as np
 import gymnasium
+from PIL import Image
+from io import BytesIO
 
 
 def construct_environment_info(env: gymnasium.Env, user_id: str):
@@ -105,3 +107,17 @@ def upload_rgb_as_image(
     response.raise_for_status()
     step = response.json()
     return step
+
+
+def get_steps_by_experiment(backend_url: str, experiment_id: str):
+    response = requests.get(f"{backend_url}/step/exp/{experiment_id}")
+    response.raise_for_status()
+    steps = response.json()
+    return steps
+
+
+def get_image_by_url(image_url: str):
+    response = requests.get(image_url)
+    response.raise_for_status()
+    image = Image.open(BytesIO(response.content))
+    return image

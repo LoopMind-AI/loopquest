@@ -21,19 +21,23 @@ export default function Navbar() {
           <li>
             <Link href="/datasets">Datasets</Link>
           </li>
-          <li>
-            <Link href="/about">About</Link>
-          </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <Link
-          href="https://discord.gg/FTnFYeSy9r"
-          target="_blank"
-          className="btn btn-ghost"
-        >
-          <Image src="/discord.svg" alt="Discord" width={30} height={30} />
-        </Link>
+        <ul className="menu menu-horizontal px-1 text-lg">
+          <li>
+            <Link href="/about">About</Link>
+          </li>
+          <li>
+            <Link
+              href="https://discord.gg/FTnFYeSy9r"
+              target="_blank"
+              className="btn btn-ghost"
+            >
+              <Image src="/discord.svg" alt="Discord" width={30} height={30} />
+            </Link>
+          </li>
+        </ul>
       </div>
     </div>
   );
