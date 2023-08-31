@@ -4,6 +4,7 @@ FROM python:3.11.3-bullseye
 COPY loopquest /sdk/loopquest/
 COPY requirements.txt /sdk/requirements.txt
 COPY setup.py /sdk/setup.py
+COPY README.md /sdk/README.md
 WORKDIR "/sdk"
 RUN pip install -e .
 
