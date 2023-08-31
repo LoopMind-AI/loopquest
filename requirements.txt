@@ -29,7 +29,7 @@ mdurl==0.1.2
 more-itertools==10.1.0
 multidict==6.0.4
 multiprocess==0.70.15
-numpy==1.25.1
+numpy~=1.25.1
 packaging==23.1
 pandas==2.0.3
 Pillow==10.0.0
