@@ -17,12 +17,18 @@ def is_initialized():
 
 
 def get_frontend_url():
+    if not is_initialized():
+        init()
     return os.environ["LOOPQUEST_FRONTEND"]
 
 
 def get_backend_url():
+    if not is_initialized():
+        init()
     return os.environ["LOOPQUEST_BACKEND"]
 
 
 def get_user_id():
+    if not is_initialized():
+        init()
     return os.environ["LOOPQUEST_USER_ID"]
