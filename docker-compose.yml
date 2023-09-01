@@ -11,9 +11,7 @@ services:
       - BACKEND_URL=http://backend:8000
     volumes:
       - ./frontend:/frontend
-      # - node_modules:/frontend/node_modules
       - /frontend/node_modules
-      - next:/frontend/.next
     depends_on:
       - backend
 
@@ -49,4 +47,3 @@ services:
 volumes:
   db:
   media_store:
-  next:
