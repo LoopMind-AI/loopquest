@@ -32,8 +32,9 @@ def test_load_dataset():
     for step in dataset:
         assert "observation" in step
         assert len(step["observation"]) > 0
+        assert "images" in step
 
-    dataset = load_dataset(exp_id, fetch_images=True)
+    dataset = load_dataset(exp_id, preload_images=True)
     for step in dataset:
         assert "images" in step
 
@@ -44,8 +45,9 @@ def test_load_datasets():
     for step in ds:
         assert "observation" in step
         assert len(step["observation"]) > 0
+        assert "images" in step
 
-    ds = load_datasets(exp_ids, fetch_images=True)
+    ds = load_datasets(exp_ids, preload_images=True)
     for step in ds:
         assert "images" in step
 

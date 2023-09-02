@@ -37,8 +37,7 @@ export default function DatasetDownload({
               <pre>
                 <code>
                   ds = load_datasets([
-                  {checkedExps.map((exp) => `"${exp.id}"`).join(", ")}],
-                  fetch_images=True)
+                  {checkedExps.map((exp) => `"${exp.id}"`).join(", ")}])
                 </code>
               </pre>
             </div>
