@@ -11,7 +11,7 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
 
   // useEffect(() => {
   //   const fetchMaxEpisode = async () => {
-  //     fetch(`/api/step/experiment/${exp_id}/episode/max`)
+  //     fetch(`/api/step/exp/${exp_id}/eps/max`)
   //       .then((response) => response.json())
   //       .then((data) => {
   //         setMaxEpisode(data);
@@ -23,7 +23,7 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
 
   useEffect(() => {
     const fetchMaxStep = async () => {
-      fetch(`/api/step/experiment/${exp.id}/episode/${episode}/step/max`)
+      fetch(`/api/step/exp/${exp.id}/eps/${episode}/step/max`)
         .then((response) => response.json())
         .then((data) => {
           setMaxStep(data);
@@ -35,9 +35,7 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
 
   useEffect(() => {
     const fetchImageUrls = async () => {
-      fetch(
-        `/api/step/experiment/${exp.id}/episode/${episode}/step/${step}/image`
-      )
+      fetch(`/api/step/${exp.id}-${episode}-${step}/image`)
         .then((response) => response.json())
         .then((data) => {
           setImageUrls(data);
@@ -104,13 +102,12 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
           </div>
         ) : (
           imageUrls.map((imageUrl) => (
-            <Image
-              key={imageUrl}
+            <img
               src={imageUrl}
               alt={`episode ${episode}, step ${step}`}
               width={500}
               height={500}
-            />
+            ></img>
           ))
         )}
       </div>

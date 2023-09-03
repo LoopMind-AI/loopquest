@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 from loopquest import schema
 from datetime import datetime
 from .crud import *
-
+import os
 
 api_router = APIRouter(
     prefix="/step",
@@ -62,7 +62,8 @@ async def upload_step_rendered_image(
     step = await db_get_step(request.app.db, id)
     # NOTE: the current request url is the same as the get image url. This is a
     # strong assumption, and should be changed in the future.
-    image_urls = step.image_urls + [str(request.url)]
+    app_url = os.getenv("APP_URL")
+    image_urls = step.image_urls + [f"{app_url}/api/step/{id}/image/{image_id}"]
     step_update = await db_update_step(
         request.app.db, id, schema.StepUpdate(image_urls=image_urls)
     )

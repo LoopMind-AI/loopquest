@@ -1,13 +1,33 @@
 services:
+  frontend:
+    container_name: loopquest-frontend
+    image: loopquest-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.dev
+    ports:
+      # FUN FACT: The port 5667 means "LOOP" on the dial pad.
+      - "5667:3000"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+    depends_on:
+      - backend
+
   backend:
     container_name: loopquest-backend
     image: loopquest-backend
     build:
       context: .
       dockerfile: Dockerfile.backend.dev
-    # NOTE: This should only be used for development.
-    # For production, don't copy the source code into the container.
+    environment:
+      # NOTE: This URL is the one exposed by the frontend container.
+      - APP_URL=http://localhost:5667
     volumes:
+      # NOTE: This should only be used for development.
+      # For production, don't copy the source code into the container.
       - ./backend/src:/backend
       - ./loopquest:/sdk/loopquest
       - media_store:/media
