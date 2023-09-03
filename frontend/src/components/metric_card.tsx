@@ -22,7 +22,7 @@ export default function MetricCard({
     const refreshMetrics = async () => {
       const data = await Promise.all(
         exps.map(async (exp) => {
-          const url = `/api/step/experiment/${exp.id}/reward/stats`;
+          const url = `/api/step/exp/${exp.id}/reward/stats`;
           const data = (await axios.get(url)).data;
           return {
             exp_id: exp ? exp.id : "",

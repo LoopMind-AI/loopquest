@@ -31,7 +31,7 @@ export default function VariableMonitor({
   );
 
   useEffect(() => {
-    fetch(`/api/environment?id=${env_id}`)
+    fetch(`/api/env?id=${env_id}`)
       .then((response) => response.json())
       .then((data) => {
         setEnv(data);
@@ -67,7 +67,7 @@ export default function VariableMonitor({
       const observation_data = await Promise.all(
         selectedObservations.map(async (selection) => {
           const data = exps.map(async (exp) => {
-            const url = `/api/step/experiment/${exp.id}/observation/${selection.value}`;
+            const url = `/api/step/exp/${exp.id}/obs/${selection.value}`;
             return {
               name: exp.name as string,
               value: (await axios.get(url)).data,
@@ -81,7 +81,7 @@ export default function VariableMonitor({
       const action_data = await Promise.all(
         selectedActions.map(async (selection) => {
           const data = exps.map(async (exp) => {
-            const url = `/api/step/experiment/${exp.id}/action/${selection.value}`;
+            const url = `/api/step/exp/${exp.id}/act/${selection.value}`;
             return {
               name: exp.name as string,
               value: (await axios.get(url)).data,
@@ -95,7 +95,7 @@ export default function VariableMonitor({
       if (selectReward) {
         const reward_data = await Promise.all(
           exps.map(async (exp) => {
-            const url = `/api/step/experiment/${exp.id}/reward`;
+            const url = `/api/step/exp/${exp.id}/reward`;
             return {
               name: exp.name as string,
               value: (await axios.get(url)).data,

@@ -3,7 +3,7 @@ import getpass
 
 
 def init():
-    os.environ["LOOPQUEST_FRONTEND"] = "http://localhost:3000"
+    os.environ["LOOPQUEST_FRONTEND"] = "http://localhost:5667"
     os.environ["LOOPQUEST_BACKEND"] = "http://localhost:8000"
     os.environ["LOOPQUEST_USER_ID"] = getpass.getuser()
 

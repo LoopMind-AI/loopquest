@@ -6,7 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile.frontend.dev
     ports:
-      - "3000:3000"
+      # FUN FACT: The port 5667 means "LOOP" on the dial pad.
+      - "5667:3000"
     environment:
       - BACKEND_URL=http://backend:8000
     volumes:
@@ -21,6 +22,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend.dev
+    environment:
+      # NOTE: This URL is the one exposed by the frontend container.
+      - APP_URL=http://localhost:5667
     volumes:
       # NOTE: This should only be used for development.
       # For production, don't copy the source code into the container.
