@@ -23,7 +23,7 @@ export default function ExperimentTable({
 
   const onRefresh = useCallback(() => {
     setLoadingExperiments(true);
-    fetch("/api/experiment/user/" + user_id + "/environment/" + env_id)
+    fetch("/api/exp/user/" + user_id + "/env/" + env_id)
       .then((response) => response.json())
       .then((data) => {
         setExperiments(data);
