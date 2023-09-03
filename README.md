@@ -49,17 +49,10 @@ pip install -e .
 
 # How to run (dev only for now)
 
-At `loopquest` folder, bring up the backend server and database,
+At `loopquest` folder, bring up web-app,
 
 ```
 docker compose up --build
-```
-
-Bring up the frontend web app,
-
-```
-cd frontend
-npm run dev
 ```
 
 Then run quickstart script,
@@ -68,7 +61,7 @@ Then run quickstart script,
 python examples/quickstart.py
 ```
 
-The command prompt should mention "Check your experiment progress on `http://localhost:3000/experiment/<exp_id>`".
+The command prompt should mention "Check your experiment progress on `http://localhost:5667/experiment/<exp_id>`".
 
 # Quick Start Example
 
