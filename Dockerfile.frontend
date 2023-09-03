@@ -1,0 +1,40 @@
+# ---- Base Node ----
+FROM node:20-alpine AS base
+
+# Set working directory
+WORKDIR /frontend
+
+# Install dependencies
+COPY ./frontend/package*.json ./
+RUN npm install
+
+# Copy all files
+COPY ./frontend .
+
+# ---- Build ----
+FROM base AS builder
+
+# Build the application for production
+RUN npm run build
+
+# ---- Release ----
+FROM node:20-alpine AS release
+
+# Set working directory
+WORKDIR /frontend
+
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+
+# Install production dependencies only
+COPY ./frontend/package*.json ./
+RUN npm ci --only=production
+
+# Copy built app from builder stage
+COPY --from=builder /frontend/.next ./.next
+COPY --from=builder /frontend/public ./public
+
+# Expose the listening port
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]
