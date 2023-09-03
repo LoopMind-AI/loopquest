@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function Datasets() {
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -20,9 +18,7 @@ export default function Datasets() {
                   <code>from loopquest.datasets import load_dataset</code>
                 </pre>
                 <pre>
-                  <code>
-                    ds = load_dataset(&quot;exp_id&quot;, fetch_images=True)
-                  </code>
+                  <code>ds = load_dataset(&quot;exp_id&quot;)</code>
                 </pre>
               </div>
             </div>
@@ -36,8 +32,7 @@ export default function Datasets() {
                 </pre>
                 <pre>
                   <code>
-                    ds = load_datasets([&quot;exp1&quot;, &quot;exp2&quot;],
-                    fetch_images=True)
+                    ds = load_datasets([&quot;exp1&quot;, &quot;exp2&quot;])
                   </code>
                 </pre>
               </div>

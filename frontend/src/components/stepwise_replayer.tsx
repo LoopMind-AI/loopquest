@@ -103,6 +103,7 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
         ) : (
           imageUrls.map((imageUrl) => (
             <img
+              key={imageUrl}
               src={imageUrl}
               alt={`episode ${episode}, step ${step}`}
               width={500}

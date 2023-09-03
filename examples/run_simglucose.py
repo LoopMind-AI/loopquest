@@ -8,16 +8,9 @@ register(
     kwargs={"patient_name": "adolescent#002"},
 )
 
-
-frontend_url = "http://localhost:3000"
-backend_url = "http://localhost:8000"
-user_id = "dope_robotics_hacker"
 experiment_name = "a test"
 env = LoopquestGymWrapper(
     gymnasium.make("simglucose/adolescent2-v0"),
-    frontend_url,
-    backend_url,
-    user_id,
     experiment_name,
 )
 obs, info = env.reset()
