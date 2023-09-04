@@ -3,7 +3,7 @@
 A Production Tool for Embodied AI.
 ![loopquest frontend](screenshots/loopquest-screenshot.png)
 
-- :video_camera:[Tutorial Video](https://capture.dropbox.com/Nucp9ObLT63qDr2E)
+- :video_camera:[Tutorial Video](https://capture.dropbox.com/Nucp9ObLT63qDr2E), [Dataset Demo](https://capture.dropbox.com/AOF5rGxHWyRb9T58)
 - :house:[Discord](https://discord.gg/FTnFYeSy9r)
 
 # Major features
@@ -25,7 +25,7 @@ env = LoopquestGymWrapper(
 
 - Beautiful frontend to visualize all the data and rendered images / videos of the simulation environment.
 - Compare your experiments in an intuitive way.
-- Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis).
+- Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis). Check [Dataset Quickstart Example](examples/Dataset%20Quickstart.ipynb) for more details.
 
 ```python
 from loopquest.datasets import load_dataset, load_datasets
