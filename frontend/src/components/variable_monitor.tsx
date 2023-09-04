@@ -31,7 +31,7 @@ export default function VariableMonitor({
   );
 
   useEffect(() => {
-    fetch(`/api/env?id=${env_id}`)
+    fetch(`/api/env/${env_id}`)
       .then((response) => response.json())
       .then((data) => {
         setEnv(data);
