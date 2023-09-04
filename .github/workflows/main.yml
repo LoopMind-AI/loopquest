@@ -8,23 +8,15 @@ on:
       - main
 
 jobs:
-  docker-compose-build:
+  loopquest-build-and-test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build the stack
-        run: docker compose up --build
-      - name: Stop Docker Compose
-        run: docker-compose down
-        
-  loopquest-test:
-     runs-on: ubuntu-latest
-     strategy:
+    strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
-        
-     steps:
+    steps:
       - uses: actions/checkout@v2
+      - name: Build the servers
+        run: docker compose up --build
       
       - name: Set up Python environment
         uses: actions/setup-python@v2
@@ -39,4 +31,6 @@ jobs:
           
       - name: Run pytest on tests folder
         run: pytest tests/
-  
+        
+      - name: Stop Docker Compose
+        run: docker-compose down
