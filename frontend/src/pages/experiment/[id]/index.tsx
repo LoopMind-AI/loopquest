@@ -131,7 +131,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
   const exp = await exp_res.json();
   const env_res = await fetch(
-    `${process.env.BACKEND_URL}/env?id=${exp.environment_id}`
+    `${process.env.BACKEND_URL}/env/${exp.environment_id}`
   );
   if (!env_res.ok) {
     return {

@@ -20,13 +20,13 @@ async def create_environment(request: Request, environment: schema.EnvironmentCr
     return created_env
 
 
-@api_router.get("/env", response_model=schema.Environment)
+@api_router.get("/env/{id}", response_model=schema.Environment)
 async def read_environment(request: Request, id: str):
     env = await db_get_environment(request.app.db, id)
     return env
 
 
-@api_router.put("/env", response_model=schema.Environment)
+@api_router.put("/env/{id}", response_model=schema.Environment)
 async def update_environment(
     request: Request, id: str, environment: schema.EnvironmentUpdate
 ):
@@ -34,7 +34,7 @@ async def update_environment(
     return env
 
 
-@api_router.delete("/env")
+@api_router.delete("/env/{id}")
 async def delete_environment(request: Request, id: str):
     await db_delete_environment(request.app.db, id)
     return {"message": "Environment deleted successfully"}
