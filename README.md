@@ -3,7 +3,7 @@
 A Production Tool for Embodied AI.
 ![loopquest frontend](screenshots/loopquest-screenshot.png)
 
-- :video_camera:[Tutorial Video](https://capture.dropbox.com/Nucp9ObLT63qDr2E)
+- :video_camera:[Tutorial Video - Updated 9/4/2023](https://capture.dropbox.com/Nucp9ObLT63qDr2E)
 - :house:[Discord](https://discord.gg/FTnFYeSy9r)
 
 # Major features
