@@ -59,7 +59,7 @@ def create_environment(backend_url: str, env: gymnasium.Env, user_id: str) -> st
 
 def get_environment(backend_url: str, id: str):
     id = replace_special_chars_with_dash(id)
-    response = requests.get(f"{backend_url}/env", params={"id": id})
+    response = requests.get(f"{backend_url}/env/{id}")
     response.raise_for_status()
     environment = response.json()
     return environment["id"]
