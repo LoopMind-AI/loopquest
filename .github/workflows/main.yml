@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the servers
-        run: docker compose up --build
+        run: docker compose up -d --build
       
       - name: Set up Python environment
         uses: actions/setup-python@v2
