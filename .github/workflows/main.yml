@@ -1,0 +1,42 @@
+name: Loopquest Build and Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  docker-compose-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker compose up --build
+      - name: Stop Docker Compose
+        run: docker-compose down
+        
+  loopquest-test:
+     runs-on: ubuntu-latest
+     strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+        
+     steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pytest
+          pip install -e .
+          
+      - name: Run pytest on tests folder
+        run: pytest tests/
+  
