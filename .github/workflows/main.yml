@@ -12,12 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+
         python-version: ["3.10", "3.11"]
     steps:
       - uses: actions/checkout@v2
       - name: Build the servers
         run: docker compose up -d --build
 
+      
       - name: Set up Python environment
         uses: actions/setup-python@v2
         with:
