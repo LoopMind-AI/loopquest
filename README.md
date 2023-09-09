@@ -21,9 +21,6 @@ env = LoopquestGymWrapper(
     gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array"), "my_experiment"
 )
 ```
-
-- Beautiful frontend to visualize all the data and rendered images / videos of the simulation environment.
-- Compare your experiments in an intuitive way.
 - Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis). Check [Dataset Quickstart Example](examples/Dataset%20Quickstart.ipynb) for more details.
 
 ```python
@@ -58,7 +55,7 @@ The data schema will look like
     'images': [<PIL.JpegImagePlugin.JpegImageFile image mode=RGB size=600x400 at 0x7F8D33094450>]
 }
 ```
-
+- All the regular MLOps features are included, e.g. data visualization, simulation rendering, experiment management.
 # Installation
 
 For stable version, run
