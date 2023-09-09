@@ -1,14 +1,13 @@
 # :scroll:Loopquest
 
-A Production Tool for Embodied AI.
+A Production Tool for Embodied AI. 
 ![loopquest frontend](screenshots/loopquest-screenshot.png)
 
 - :video_camera:[Tutorial Video - Updated 9/4/2023](https://capture.dropbox.com/UXKQxGkwel6VRZJQ), [Dataset Demo](https://capture.dropbox.com/AOF5rGxHWyRb9T58)
 - :house:[Discord](https://discord.gg/FTnFYeSy9r)
 
 # Major features
-
-- Log all the observation, action, reward, rendered images into database with only ONE extra line of code.
+- Imitation Learning / Offline Reinforcement Learning Oriented MLOps. Log all the observation, action, reward, rendered images into database with only ONE extra line of code.
 
 ```python
 env = gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
