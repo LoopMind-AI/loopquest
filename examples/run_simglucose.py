@@ -1,5 +1,5 @@
 import gymnasium
-from loopquest.gym_wrappers import LoopquestGymWrapper
+import loopquest
 from gymnasium.envs.registration import register
 
 register(
@@ -9,10 +9,7 @@ register(
 )
 
 experiment_name = "a test"
-env = LoopquestGymWrapper(
-    gymnasium.make("simglucose/adolescent2-v0"),
-    experiment_name,
-)
+env = loopquest.make_env(gymnasium.make("simglucose/adolescent2-v0"))
 obs, info = env.reset()
 for i in range(100):
     action = env.action_space.sample()

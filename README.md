@@ -1,12 +1,17 @@
 # :scroll:Loopquest
 
-A Production Tool for Embodied AI. 
+[![Downloads](https://static.pepy.tech/badge/loopquest)](https://pepy.tech/project/loopquest)
+[![Downloads](https://static.pepy.tech/badge/loopquest/month)](https://pepy.tech/project/loopquest)
+[![Downloads](https://static.pepy.tech/badge/loopquest/week)](https://pepy.tech/project/loopquest)
+
+A Production Tool for Embodied AI.
 ![loopquest frontend](screenshots/loopquest-screenshot.png)
 
 - :video_camera:[Tutorial Video - Updated 9/4/2023](https://capture.dropbox.com/UXKQxGkwel6VRZJQ), [Dataset Demo](https://capture.dropbox.com/AOF5rGxHWyRb9T58)
 - :house:[Discord](https://discord.gg/FTnFYeSy9r)
 
 # Major features
+
 - Imitation Learning / Offline Reinforcement Learning Oriented MLOps. Log all the observation, action, reward, rendered images into database with only ONE extra line of code.
 
 ```python
@@ -16,11 +21,12 @@ env = gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
 ->
 
 ```python
-from loopquest.gym_wrappers import LoopquestGymWrapper
-env = LoopquestGymWrapper(
-    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array"), "my_experiment"
+import loopquest
+env = loopquest.make_env(
+    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
 )
 ```
+
 - Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis). Check [Dataset Quickstart Example](examples/Dataset%20Quickstart.ipynb) for more details.
 
 ```python
@@ -55,7 +61,9 @@ The data schema will look like
     'images': [<PIL.JpegImagePlugin.JpegImageFile image mode=RGB size=600x400 at 0x7F8D33094450>]
 }
 ```
+
 - All the regular MLOps features are included, e.g. data visualization, simulation rendering, experiment management.
+
 # Installation
 
 For stable version, run
@@ -103,12 +111,10 @@ bash start_dev_server.sh
 
 ```python
 import gymnasium
-from loopquest.gym_wrappers import LoopquestGymWrapper
+import loopquest
 
-experiment_name = "test"
-env = LoopquestGymWrapper(
-    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array"),
-    experiment_name,
+env = loopquest.make_env(
+    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
 )
 obs, info = env.reset()
 for i in range(100):
@@ -118,4 +124,5 @@ for i in range(100):
     if terminated or truncated:
         break
 env.close()
+
 ```

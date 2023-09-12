@@ -1,11 +1,12 @@
 import gymnasium
-from loopquest.gym_wrappers import LoopquestGymWrapper
+
+import loopquest
 
 
 def test_gymnasium_wrapper():
     name = "MountainCarContinuous-v0"
     experiment_name = "test"
-    env = LoopquestGymWrapper(
+    env = loopquest.make_env(
         gymnasium.make(name, render_mode="rgb_array"),
         experiment_name,
     )

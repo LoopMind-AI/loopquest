@@ -6,6 +6,8 @@ from gymnasium.spaces.utils import flatten
 import io
 from PIL import Image
 import re
+import random
+import subprocess
 
 
 def cast_to_list(
@@ -54,3 +56,58 @@ def rgb_array_to_image_bytes(rgb_array: np.ndarray):
 def replace_special_chars_with_dash(s):
     # Replace all non-alphanumeric characters with a dash
     return re.sub(r"[^a-zA-Z0-9]", "-", s)
+
+
+def generate_experiment_name():
+    adjectives = [
+        "fuzzy",
+        "giant",
+        "tiny",
+        "swift",
+        "clever",
+        "brave",
+        "shiny",
+        "mighty",
+        "quiet",
+        "loud",
+    ]
+    colors = [
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "purple",
+        "pink",
+        "orange",
+        "white",
+        "black",
+        "brown",
+    ]
+    animals = [
+        "kangaroo",
+        "lion",
+        "penguin",
+        "eagle",
+        "dolphin",
+        "elephant",
+        "owl",
+        "cheetah",
+        "giraffe",
+        "hippo",
+    ]
+
+    return (
+        random.choice(adjectives)
+        + "-"
+        + random.choice(colors)
+        + "-"
+        + random.choice(animals)
+    )
+
+
+def is_docker_installed():
+    try:
+        subprocess.check_output(["docker", "--version"])
+        return True
+    except:
+        return False

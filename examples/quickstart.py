@@ -1,10 +1,8 @@
 import gymnasium
-from loopquest.gym_wrappers import LoopquestGymWrapper
+import loopquest
 
-experiment_name = "test"
-env = LoopquestGymWrapper(
-    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array"),
-    experiment_name,
+env = loopquest.make_env(
+    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
 )
 obs, info = env.reset()
 for i in range(100):

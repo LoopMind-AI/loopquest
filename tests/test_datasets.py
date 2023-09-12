@@ -1,12 +1,12 @@
 from loopquest.datasets import load_dataset, load_datasets
 import gymnasium
-from loopquest.gym_wrappers import LoopquestGymWrapper
+import loopquest
 
 
 def run_sim():
     name = "MountainCarContinuous-v0"
     experiment_name = "test"
-    env = LoopquestGymWrapper(
+    env = loopquest.make_env(
         gymnasium.make(name, render_mode="rgb_array"),
         experiment_name,
     )

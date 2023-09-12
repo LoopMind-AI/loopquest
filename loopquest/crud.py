@@ -50,6 +50,7 @@ def construct_environment_info(env: gymnasium.Env, user_id: str):
 
 
 def create_environment(backend_url: str, env: gymnasium.Env, user_id: str) -> str:
+    print(backend_url)
     environment = construct_environment_info(env, user_id)
     response = requests.post(f"{backend_url}/env", json=environment.model_dump())
     response.raise_for_status()
@@ -69,6 +70,7 @@ def create_experiment(
     backend_url: str,
     experiment: ExperimentCreate,
 ) -> str:
+    print("create_experiment", backend_url)
     response = requests.post(f"{backend_url}/exp", json=experiment.model_dump())
     response.raise_for_status()
     created_experiment = response.json()

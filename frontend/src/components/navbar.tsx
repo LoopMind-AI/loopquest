@@ -21,10 +21,6 @@ export default function Navbar() {
           <li>
             <Link href="/datasets">Datasets</Link>
           </li>
-        </ul>
-      </div>
-      <div className="navbar-end">
-        <ul className="menu menu-horizontal px-1 text-lg">
           <li>
             <Link href="/about">About</Link>
           </li>
