@@ -85,21 +85,15 @@ cd loopquest
 pip install -e .
 ```
 
-# How to run
+# Usage
 
-At `loopquest` folder, bring up web-app,
-
-```sh
-docker compose up --build
-```
-
-Then run quickstart script,
+Run [quickstart script](examples/quickstart.py),
 
 ```sh
 python examples/quickstart.py
 ```
 
-The command prompt should mention "Check your experiment progress on `http://localhost:5667/experiment/<exp_id>`".
+The command prompt will ask you to select local or cloud instance. Pick the instance you want and once the script is up and running. You should see "Check your experiment progress on `http://localhost:5667/experiment/<exp_id>` or `https://open.loopquest.ai/experiment/<exp_id`" (depending on the instance you selected).
 
 **Loopquest Developer Only**: to bring up a development server that reflects your local changes in real time, run
 
