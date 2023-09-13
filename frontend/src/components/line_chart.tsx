@@ -65,7 +65,6 @@ export default function LineChart({ line_data }: { line_data: VariableData }) {
     return {
       label: data.name,
       data: data.value,
-      fill: true,
       tension: 0.1,
       pointRadius: 0,
     };

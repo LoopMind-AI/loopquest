@@ -1,38 +1,62 @@
 import os
 import getpass
+import webbrowser
 from .ui import choose_instance
+from .crud import get_cloud_user_id
 from .utils import is_docker_installed
+from .private_api import (
+    is_local_instance_initialized,
+    is_cloud_instance_initialized,
+    wait_for_local_instance_init,
+    wait_for_cloud_instance_init,
+    save_token_to_env,
+    add_env_to_gitignore,
+    LOCAL_BACKEND_URL,
+    LOCAL_FRONTEND_URL,
+    CLOUD_BACKEND_URL,
+    CLOUD_FRONTEND_URL,
+)
 
 
 def init(local=None):
     if local is None:
         local = choose_instance() == "local"
 
+    # TODO: add an api to record the choice of the instance.
     if local:
-        # if is_docker_installed():
-        #     print("Docker is detected. Running 'docker compose up'...")
-        #     # In a real environment, you would uncomment the next line to run docker-compose up
-        #     os.system("docker compose up -d")
-        # else:
-        #     raise Exception(
-        #         "Docker is not installed. Visit the following URL to install Docker then try again: https://docs.docker.com/get-docker/"
-        #     )
+        if is_docker_installed():
+            print("Docker is detected. Running 'docker compose up'...")
+            # In a real environment, you would uncomment the next line to run docker-compose up
+            os.system("docker compose up -d")
+        else:
+            raise Exception(
+                "Docker is not installed. Visit the following URL to install Docker then try again: https://docs.docker.com/get-docker/"
+            )
+        wait_for_local_instance_init()
 
-        os.environ["LOOPQUEST_FRONTEND"] = "http://localhost:5667"
-        os.environ["LOOPQUEST_BACKEND"] = "http://localhost:5667/api"
-        os.environ["LOOPQUEST_USER_ID"] = getpass.getuser()
     else:
-        os.environ["LOOPQUEST_FRONTEND"] = "http://localhost:3000"
-        os.environ["LOOPQUEST_BACKEND"] = "http://localhost:3000/api"
-        os.environ["LOOPQUEST_USER_ID"] = ""
+        sign_in_url = f"{CLOUD_FRONTEND_URL}/sign-in"
+        print(
+            f"Opening LoopQuest Sign-In page ... \nIf the browser does not open automatically, visit {sign_in_url} manually."
+        )
+        webbrowser.open_new(sign_in_url)
+        token = getpass.getpass(
+            "Enter your LoopQuest user token (the token expires in 1 hour): "
+        ).strip()
+        print(
+            "Saving the token to .env file... Please keep your token safe. DO NOT share this token with others!"
+        )
+        save_token_to_env(token)
+        print("In case .env file is tracked by git, Adding .env to .gitignore...")
+        add_env_to_gitignore()
+
+        # wait_for_cloud_instance_init()
+
+    print("LoopQuest is initialized.")
 
 
 def is_initialized():
-    return (
-        "LOOPQUEST_FRONTEND" in os.environ
-        and "LOOPQUEST_BACKEND" in os.environ
-        and "LOOPQUEST_USER_ID" in os.environ
-    )
+    return is_local_instance_initialized() or is_cloud_instance_initialized()
 
 
 def initailize(func):
@@ -46,17 +70,23 @@ def initailize(func):
 
 @initailize
 def get_frontend_url():
-    return os.environ["LOOPQUEST_FRONTEND"]
+    if is_local_instance_initialized():
+        return LOCAL_FRONTEND_URL
+    return CLOUD_FRONTEND_URL
 
 
 @initailize
 def get_backend_url():
-    return os.environ["LOOPQUEST_BACKEND"]
+    if is_local_instance_initialized():
+        return LOCAL_BACKEND_URL
+    return CLOUD_BACKEND_URL
 
 
 @initailize
 def get_user_id():
-    return os.environ["LOOPQUEST_USER_ID"]
+    if is_local_instance_initialized():
+        return getpass.getuser()
+    return get_cloud_user_id(get_backend_url())
 
 
 @initailize
@@ -67,3 +97,8 @@ def make_env(env, experiment_name=None, experiment_description=""):
     if experiment_name is None:
         experiment_name = generate_experiment_name()
     return LoopquestGymWrapper(env, experiment_name, experiment_description)
+
+
+def close():
+    if is_local_instance_initialized():
+        os.system("docker compose down")

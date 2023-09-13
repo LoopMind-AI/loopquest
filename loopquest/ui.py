@@ -1,7 +1,3 @@
-import os
-import subprocess
-
-
 def choose_instance():
     while True:
         print("\nChoose an app instance:")

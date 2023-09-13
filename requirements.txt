@@ -29,7 +29,7 @@ mdurl==0.1.2
 more-itertools==10.1.0
 multidict==6.0.4
 multiprocess==0.70.15
-numpy~=1.25.1
+numpy==1.25.1
 packaging==23.1
 pandas==2.0.3
 Pillow==10.0.0
@@ -43,6 +43,7 @@ pygame==2.5.0
 Pygments==2.16.1
 pytest==7.4.0
 python-dateutil==2.8.2
+python-dotenv==1.0.0
 pytz==2023.3
 PyYAML==6.0.1
 readme-renderer==41.0

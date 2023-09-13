@@ -14,7 +14,7 @@ from .schema import (
     ExperimentStatus,
 )
 from .utils import jsonize_dict, cast_to_list, flatten_and_cast_to_list
-from .api import init, is_initialized, get_frontend_url, get_backend_url, get_user_id
+from .api import get_frontend_url, get_backend_url, get_user_id
 
 
 class LoopquestGymWrapper(gymnasium.Wrapper):
@@ -25,8 +25,6 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         experiment_description: str = "",
     ):
         super().__init__(env)
-        if not is_initialized():
-            init()
         self.current_step = 0
         self.current_episode = None
         self.prev_observation = None
