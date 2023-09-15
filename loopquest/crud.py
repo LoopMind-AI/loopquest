@@ -31,10 +31,16 @@ def make_request(method: str, url: str, **kwargs):
         headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
         kwargs["headers"] = headers
 
-    # print(headers)
     response = requests.request(method, url, **kwargs)
     response.raise_for_status()
     return response
+
+
+def send_instance_choice_stats(backend_url: str, is_local: bool):
+    res = requests.post(
+        f"{backend_url}/user_stats/instance_choice", params={"is_local": is_local}
+    )
+    res.raise_for_status()
 
 
 def construct_environment_info(env: gymnasium.Env, user_id: str):

@@ -2,7 +2,7 @@ import os
 import getpass
 import webbrowser
 from .ui import choose_instance
-from .crud import get_cloud_user_id
+from .crud import get_cloud_user_id, send_instance_choice_stats
 from .utils import is_docker_installed
 from .private_api import (
     is_local_instance_initialized,
@@ -18,9 +18,11 @@ from .private_api import (
 )
 
 
-def init(local=None):
+def init(local: bool | None = None):
     if local is None:
         local = choose_instance() == "local"
+
+    send_instance_choice_stats(CLOUD_BACKEND_URL, local)
 
     # TODO: add an api to record the choice of the instance.
     if local:

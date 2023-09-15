@@ -8,6 +8,9 @@ LOCAL_FRONTEND_URL = "http://localhost:5667"
 LOCAL_BACKEND_URL = "http://localhost:8000"
 CLOUD_FRONTEND_URL = "https://open.loopquest.ai"
 CLOUD_BACKEND_URL = "https://open.loopquest.ai/api"
+# For local development
+# CLOUD_FRONTEND_URL = "http://localhost:3000"
+# CLOUD_BACKEND_URL = "http://localhost:3000/api"
 TOKEN_ENV_VAR_NAME = "LOOPQUEST_USER_TOKEN"
 
 
@@ -83,7 +86,9 @@ def save_token_to_env(token):
 
 def add_env_to_gitignore():
     gitignore_path = os.path.join(os.getcwd(), ".gitignore")
-    if os.path.exists(gitignore_path) and not is_dotenv_in_gitignore(gitignore_path):
+    if os.path.exists(gitignore_path):
+        if is_dotenv_in_gitignore(gitignore_path):
+            return
         with open(gitignore_path, "a") as f:
             f.write("\n# Added by LoopQuest\n")
             f.write(".env\n")
