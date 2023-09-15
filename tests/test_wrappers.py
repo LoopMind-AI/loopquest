@@ -1,14 +1,12 @@
 import gymnasium
-from loopquest.gym_wrappers import LoopquestGymWrapper
+import loopquest
+from unittest.mock import patch
 
 
 def test_gymnasium_wrapper():
     name = "MountainCarContinuous-v0"
-    experiment_name = "test"
-    env = LoopquestGymWrapper(
-        gymnasium.make(name, render_mode="rgb_array"),
-        experiment_name,
-    )
+    with patch("builtins.input", return_value="2"):
+        env = loopquest.make_env(gymnasium.make(name, render_mode="rgb_array"))
     obs, info = env.reset()
     print(f"Reset: obs: {obs}, info: {info}")
     for i in range(10):

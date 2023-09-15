@@ -6,6 +6,9 @@ from gymnasium.spaces.utils import flatten
 import io
 from PIL import Image
 import re
+import random
+import subprocess
+import os
 
 
 def cast_to_list(
@@ -54,3 +57,101 @@ def rgb_array_to_image_bytes(rgb_array: np.ndarray):
 def replace_special_chars_with_dash(s):
     # Replace all non-alphanumeric characters with a dash
     return re.sub(r"[^a-zA-Z0-9]", "-", s)
+
+
+def generate_experiment_name():
+    adjectives = [
+        "fuzzy",
+        "giant",
+        "tiny",
+        "swift",
+        "clever",
+        "brave",
+        "shiny",
+        "mighty",
+        "quiet",
+        "loud",
+    ]
+    colors = [
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "purple",
+        "pink",
+        "orange",
+        "white",
+        "black",
+        "brown",
+    ]
+    animals = [
+        "kangaroo",
+        "lion",
+        "penguin",
+        "eagle",
+        "dolphin",
+        "elephant",
+        "owl",
+        "cheetah",
+        "giraffe",
+        "hippo",
+    ]
+
+    return (
+        random.choice(adjectives)
+        + "-"
+        + random.choice(colors)
+        + "-"
+        + random.choice(animals)
+    )
+
+
+def is_docker_installed():
+    try:
+        subprocess.check_output(["docker", "--version"])
+        return True
+    except:
+        return False
+
+
+def update_or_append_env_var(var_name, new_value, env_file_path=".env", comment=None):
+    """
+    Updates or appends an environment variable in the specified .env file.
+
+    Args:
+    - var_name (str): The name of the environment variable.
+    - new_value (str): The new value for the environment variable.
+    - env_file_path (str): Path to the .env file. Default is ".env".
+
+    Returns:
+    - bool: True if operation was successful, False otherwise.
+    """
+    try:
+        lines = []
+        var_found = False
+
+        # Read the existing .env file
+        if os.path.exists(env_file_path):
+            with open(env_file_path, "r") as file:
+                for line in file:
+                    if line.startswith(f"{var_name}="):
+                        lines.append(f"{var_name}={new_value}\n")
+                        var_found = True
+                    else:
+                        lines.append(line)
+
+        # If the variable was not found, append it
+        if not var_found:
+            if comment:
+                lines.append(f"# {comment}\n")
+            lines.append(f"{var_name}={new_value}\n")
+
+        # Write the updated lines back to the .env file
+        with open(env_file_path, "w") as file:
+            file.writelines(lines)
+
+        return True
+
+    except FileNotFoundError:
+        # Handle the case where .env might not exist
+        return False

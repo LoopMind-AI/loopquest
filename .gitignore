@@ -50,3 +50,6 @@ coverage.xml
 docs/_build/
 
 .ipynb_checkpoints/
+
+# Added by LoopQuest
+.env

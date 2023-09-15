@@ -14,7 +14,8 @@ from .schema import (
     ExperimentStatus,
 )
 from .utils import jsonize_dict, cast_to_list, flatten_and_cast_to_list
-from .api import init, is_initialized, get_frontend_url, get_backend_url, get_user_id
+from .api import get_frontend_url, get_backend_url, get_user_id
+from concurrent.futures import ThreadPoolExecutor
 
 
 class LoopquestGymWrapper(gymnasium.Wrapper):
@@ -23,10 +24,9 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         env: gymnasium.Env,
         experiment_name: str = "default",
         experiment_description: str = "",
+        max_workers: int = 10,
     ):
         super().__init__(env)
-        if not is_initialized():
-            init()
         self.current_step = 0
         self.current_episode = None
         self.prev_observation = None
@@ -51,6 +51,8 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         print(
             f"Check the experiment progress at: {self.frontend_url}/experiment/{self.exp_id}"
         )
+        # TODO: evaluate if message queue is better than thread pool.
+        self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
     @property
     def exp_id(self):
@@ -68,7 +70,9 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         self.current_step += 1
         observation, reward, terminated, truncated, info = self.env.step(action)
         info_json_str = jsonize_dict(info)
-        create_step(
+        # TODO: we can do batch upload here instead of uploading one by one.
+        self.executor.submit(
+            create_step,
             self.backend_url,
             StepCreate(
                 id=self.step_id,
@@ -88,6 +92,26 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
                 info=info_json_str,
             ),
         )
+        # create_step(
+        #     self.backend_url,
+        #     StepCreate(
+        #         id=self.step_id,
+        #         experiment_id=self.exp_id,
+        #         episode=self.current_episode,
+        #         step=self.current_step,
+        #         observation=flatten_and_cast_to_list(
+        #             self.observation_space, observation
+        #         ),
+        #         action=cast_to_list(action),
+        #         reward=reward,
+        #         prev_observation=flatten_and_cast_to_list(
+        #             self.observation_space, self.prev_observation
+        #         ),
+        #         termnated=terminated,
+        #         truncated=truncated,
+        #         info=info_json_str,
+        #     ),
+        # )
         self.prev_observation = observation
         return observation, reward, terminated, truncated, info
 
@@ -106,7 +130,8 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         #     self.current_episode += 1
 
         info_json_str = jsonize_dict(info)
-        create_step(
+        self.executor.submit(
+            create_step,
             self.backend_url,
             StepCreate(
                 id=self.step_id,
@@ -129,6 +154,7 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
             ExperimentUpdate(status=ExperimentStatus.FINISHED),
         )
         self.env.close()
+        self.executor.shutdown()
 
     def render(self):
         # TODO: implement this.
@@ -142,13 +168,19 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
             )
         elif self.render_mode == "rgb_array":
             rgb_array = self.env.render()
-            step = upload_rgb_as_image(self.backend_url, self.step_id, rgb_array)
+            self.executor.submit(
+                upload_rgb_as_image, self.backend_url, self.step_id, rgb_array
+            )
             return rgb_array
         elif self.render_mode == "rgb_array_list":
             rgb_array_list = self.env.render()
             for i, rgb_array in enumerate(rgb_array_list):
-                upload_rgb_as_image(
-                    self.backend_url, self.step_id, rgb_array, image_id=i
+                self.executor.submit(
+                    upload_rgb_as_image,
+                    self.backend_url,
+                    self.step_id,
+                    rgb_array,
+                    image_id=i,
                 )
             return rgb_array_list
 

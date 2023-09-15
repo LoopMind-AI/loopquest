@@ -14,7 +14,7 @@ api_router = APIRouter(
 )
 
 
-@api_router.post("/", response_model=schema.Experiment)
+@api_router.post("", response_model=schema.Experiment)
 async def create_experiment(request: Request, experiment: schema.ExperimentCreate):
     while True:
         try:
