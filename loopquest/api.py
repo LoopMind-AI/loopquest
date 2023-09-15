@@ -8,7 +8,7 @@ from .private_api import (
     is_local_instance_initialized,
     is_cloud_instance_initialized,
     wait_for_local_instance_init,
-    wait_for_cloud_instance_init,
+    verify_token,
     save_token_to_env,
     add_env_to_gitignore,
     LOCAL_BACKEND_URL,
@@ -42,17 +42,22 @@ def init(local: bool | None = None):
             f"Opening LoopQuest Sign-In page ... \nIf the browser does not open automatically, visit {sign_in_url} manually."
         )
         webbrowser.open_new(sign_in_url)
-        token = getpass.getpass(
-            "Enter your LoopQuest user token (the token expires in 1 hour): "
-        ).strip()
+        while True:
+            token = getpass.getpass(
+                "Enter your LoopQuest user token (the token expires in 1 hour): "
+            ).strip()
+            if verify_token(token):
+                print("Token is verified.")
+                break
+            else:
+                print("Token is invalid. Please try again.")
+
         print(
             "Saving the token to .env file... Please keep your token safe. DO NOT share this token with others!"
         )
         save_token_to_env(token)
         print("In case .env file is tracked by git, Adding .env to .gitignore...")
         add_env_to_gitignore()
-
-        # wait_for_cloud_instance_init()
 
     print("LoopQuest is initialized.")
 

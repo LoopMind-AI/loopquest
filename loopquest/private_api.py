@@ -1,7 +1,6 @@
 import time
 import requests
 import os
-from dotenv import load_dotenv
 from .utils import update_or_append_env_var
 
 LOCAL_FRONTEND_URL = "http://localhost:5667"
@@ -55,24 +54,15 @@ def wait_for_local_instance_init():
         return
 
 
-def wait_for_cloud_instance_init():
-    start_time = time.time()
-    timeout = 360  # seconds
+def verify_token(token):
     try:
-        while True:
-            if is_cloud_instance_initialized():
-                break
-
-            elapsed_time = time.time() - start_time
-            if elapsed_time > timeout:
-                raise Exception(
-                    f"Timeout ({timeout} sec) exceeded while waiting for local instance to initialize."
-                )
-    except KeyboardInterrupt:
-        print(
-            "KeyboardInterrupt received. Stop waiting for the cloud instance to initialize."
+        response = requests.get(
+            f"{CLOUD_BACKEND_URL}/user_id", headers={"Authorization": f"Bearer {token}"}
         )
-        return
+        response.raise_for_status()
+        return True
+    except:
+        return False
 
 
 def save_token_to_env(token):
