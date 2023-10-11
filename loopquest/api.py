@@ -68,6 +68,7 @@ def is_initialized():
 
 def initailize(func):
     def inner(*args, **kwargs):
+        print("Initializing LoopQuest...")
         if not is_initialized():
             init()
         return func(*args, **kwargs)

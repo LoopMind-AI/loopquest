@@ -1,7 +1,6 @@
 from datasets import Dataset
 from .crud import get_steps_by_experiment, get_image_by_url
-from .api import get_backend_url
-from PIL import Image
+from .api import get_backend_url, initailize
 
 
 def dataset_gen(experiment_ids: list[str]):
@@ -25,6 +24,7 @@ def to_pilow(examples):
 
 # TODO: add environment info to the dataset so the foundation model training can
 # be conditioned on each of the environment.
+@initailize
 def load_dataset(
     experiment_id: str, preload_images: bool = False, num_proc: int = 1
 ) -> Dataset:
@@ -37,9 +37,11 @@ def load_dataset(
     return ds
 
 
+@initailize
 def load_datasets(
     experiment_ids: list[str], preload_images: bool = False, num_proc: int = 1
 ) -> Dataset:
+    print("Loading datasets...")
     ds = Dataset.from_generator(lambda: dataset_gen(experiment_ids))
     if preload_images:
         # NOTE: this could be very slow. Users could

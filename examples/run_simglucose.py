@@ -8,7 +8,6 @@ register(
     kwargs={"patient_name": "adolescent#002"},
 )
 
-experiment_name = "a test"
 env = loopquest.make_env(gymnasium.make("simglucose/adolescent2-v0"))
 obs, info = env.reset()
 for i in range(100):

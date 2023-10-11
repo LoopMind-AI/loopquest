@@ -4,7 +4,7 @@ import loopquest
 from unittest.mock import patch
 
 
-def run_sim():
+def run_sim_local():
     name = "MountainCarContinuous-v0"
     with patch("builtins.input", return_value="2"):
         env = loopquest.make_env(
@@ -22,12 +22,12 @@ def run_sim():
 
 
 def gen_datasets():
-    exp_ids = [run_sim() for _ in range(3)]
+    exp_ids = [run_sim_local() for _ in range(3)]
     return exp_ids
 
 
 def test_load_dataset():
-    exp_id = run_sim()
+    exp_id = run_sim_local()
     dataset = load_dataset(exp_id)
     for step in dataset:
         assert "observation" in step
@@ -50,6 +50,10 @@ def test_load_datasets():
     ds = load_datasets(exp_ids, preload_images=True)
     for step in ds:
         assert "images" in step
+
+
+def test_load_cloud_datasets():
+    pass
 
 
 if __name__ == "__main__":
