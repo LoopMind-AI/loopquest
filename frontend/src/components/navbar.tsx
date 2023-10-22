@@ -35,6 +35,7 @@ export default function Navbar() {
           </li>
         </ul>
       </div>
+      <div className="navbar-end hidden lg:flex"></div>
     </div>
   );
 }
