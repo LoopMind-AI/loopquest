@@ -1,21 +1,11 @@
 from setuptools import setup
 
-
-def parse_requirements(filename):
-    """Load requirements from a pip requirements file."""
-    with open(filename) as f:
-        lineiter = (line.strip() for line in f)
-        return [line for line in lineiter if line and not line.startswith("#")]
-
-
-reqs = parse_requirements("requirements.txt")
-
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name="loopquest",
-    version="0.1.10",
+    version="0.1.11",
     description="A Production Tool for Embodied AI.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -23,7 +13,17 @@ setup(
     author_email="contactus@loopmind.ai",
     url="https://github.com/LoopMind-AI/loopquest",
     packages=["loopquest"],
-    install_requires=reqs,
+    install_requires=[
+        "numpy>=1.25.1",
+        "gymnasium~=0.29.0",
+        "datasets>=2.14.4",
+        "pydantic>=2.1.1",
+        "python-dotenv>=1.0.0",
+        "requests>=2.31.0",
+        "Pillow>=10.0.0",
+        "pandas>=2.0.3",
+        "pygame>=2.5.0",
+    ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

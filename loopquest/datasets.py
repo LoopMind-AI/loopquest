@@ -1,7 +1,6 @@
 from datasets import Dataset
 from .crud import get_steps_by_experiment, get_image_by_url
 from .api import get_backend_url
-from PIL import Image
 
 
 def dataset_gen(experiment_ids: list[str]):
