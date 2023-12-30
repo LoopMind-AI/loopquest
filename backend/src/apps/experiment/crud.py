@@ -53,7 +53,7 @@ async def db_get_experiment_by_user_env(db, user_id: str, env_id: str):
 
 async def db_get_experiment_by_user(db, user_id: str):
     collection = await get_experiment_collection(db)
-    exps = collection.find({"user_id": user_id})
+    exps = collection.find({"user_id": user_id}, sort=[("update_time", -1)])
     return [schema.Experiment(**exp) async for exp in exps]
 
 
