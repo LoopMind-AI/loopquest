@@ -36,7 +36,7 @@ def is_cloud_instance_initialized():
 
 def wait_for_local_instance_init():
     start_time = time.time()
-    timeout = 60  # seconds
+    timeout = 60 * 5  # seconds
     try:
         while True:
             if is_local_instance_initialized():
