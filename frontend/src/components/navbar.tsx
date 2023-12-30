@@ -35,6 +35,9 @@ export default function Navbar() {
           </li>
         </ul>
       </div>
+      <div className="navbar-end justify-end">
+        <div className="label">Local Instance</div>
+      </div>
     </div>
   );
 }
