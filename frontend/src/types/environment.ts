@@ -1,13 +1,10 @@
-type ScalarInfo = {
+type VarNode = {
+  tree_path: string;
+  path: string;
   name?: string;
   description?: string;
-};
-
-type VectorSpec = {
-  name?: string;
-  space: string;
-  size: number;
-  var_info?: ScalarInfo[];
+  spec?: string;
+  children: VarNode[];
 };
 
 type Environment = {
@@ -18,12 +15,12 @@ type Environment = {
   user_id?: string;
   gym_id?: string;
   env_spec?: string;
-  action_spec?: VectorSpec[];
-  observation_spec?: VectorSpec[];
+  action_metadata?: VarNode;
+  observation_metadata?: VarNode;
   reward_upper_limit?: number;
   reward_lower_limit?: number;
   git_repo?: string;
   profile_image?: string;
 };
 
-export type { Environment, VectorSpec };
+export type { Environment, VarNode };

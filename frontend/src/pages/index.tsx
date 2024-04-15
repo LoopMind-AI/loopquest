@@ -1,21 +1,17 @@
 import Link from "next/link";
-import { Experiment } from "@/types/experiment";
+import { Project } from "@/types/project";
 import { formatDateTime } from "@/utils/time";
-import { statusBadge } from "@/utils/status_badge";
 import { useMemo, useState } from "react";
-import DatasetDownload from "@/components/dataset_download";
 
-export default function Home({ exps }: { exps: Experiment[] }) {
+export default function Home({ projects }: { projects: Project[] }) {
   const rowsPerPage = 10;
   const [page, setPage] = useState(1);
-  const [checkedExps, setCheckedExps] = useState<Experiment[]>([]);
-  const displayExps = useMemo(() => {
-    return exps.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-  }, [exps, page]);
-  console.log(exps.length);
+  const displayProjects = useMemo(() => {
+    return projects.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  }, [projects, page]);
   const totalPages = useMemo(() => {
-    return Math.ceil(exps.length / rowsPerPage);
-  }, [exps]);
+    return Math.ceil(projects.length / rowsPerPage);
+  }, [projects]);
   const pageNumbers = useMemo(() => {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }, [totalPages]);
@@ -24,64 +20,40 @@ export default function Home({ exps }: { exps: Experiment[] }) {
     <div>
       <div className="card shadow bg-base-100 m-5 overflow-x-auto h-full">
         <div className="card-body">
-          <h2 className="card-title">Experiments</h2>
+          <h2 className="card-title">Projects</h2>
           <table className="table table-pin-rows">
             {/* head */}
             <thead>
               <tr>
                 <th></th>
-                <th>Experiment ID</th>
-                <th>Experiment Name</th>
-                <th>Environment ID</th>
+                <th>Project ID</th>
+                <th>Project Name</th>
+                <th>Environments</th>
                 <th>Create Time</th>
                 <th>Update Time</th>
-                <th>Status</th>
               </tr>
             </thead>
             {/* body */}
-            {displayExps.map((exp) => (
-              <tbody key={exp.id}>
+            {displayProjects.map((project) => (
+              <tbody key={project.id}>
                 <tr>
-                  <th>
-                    <label>
-                      <input
-                        type="checkbox"
-                        className="checkbox"
-                        checked={checkedExps
-                          .map((exp) => exp.id)
-                          .includes(exp.id)}
-                        onChange={(event) => {
-                          const isChecked = event.target.checked;
-                          if (isChecked) {
-                            setCheckedExps([...checkedExps, exp]);
-                          } else {
-                            setCheckedExps(
-                              checkedExps.filter((key) => key.id !== exp.id)
-                            );
-                          }
-                        }}
-                      />
-                    </label>
-                  </th>
+                  <th></th>
                   <td>
-                    <Link href={`/experiment/${exp.id}`}>{exp.id}</Link>
+                    <Link href={`/project/${project.id}`}>{project.id}</Link>
                   </td>
                   <td>
-                    <Link href={`/experiment/${exp.id}`}>{exp.name}</Link>
-                  </td>
-                  <td>{exp.environment_id}</td>
-                  <td>{formatDateTime(exp.creation_time)}</td>
-                  <td>
-                    {exp.update_time ? formatDateTime(exp.update_time) : ""}
+                    <Link href={`/project/${project.id}`}>{project.name}</Link>
                   </td>
                   <td>
-                    <div
-                      className={
-                        "badge " + (exp.status ? statusBadge(exp.status) : "")
-                      }
-                    >
-                      {exp.status}
-                    </div>
+                    {project.environment_ids
+                      ? project.environment_ids.join(", ")
+                      : ""}
+                  </td>
+                  <td>{formatDateTime(project.creation_time)}</td>
+                  <td>
+                    {project.update_time
+                      ? formatDateTime(project.update_time)
+                      : ""}
                   </td>
                 </tr>
               </tbody>
@@ -100,9 +72,6 @@ export default function Home({ exps }: { exps: Experiment[] }) {
               </button>
             ))}
           </div>
-          <div className="card-actions justify-end">
-            <DatasetDownload checkedExps={checkedExps} />
-          </div>
         </div>
       </div>
     </div>
@@ -112,14 +81,12 @@ export default function Home({ exps }: { exps: Experiment[] }) {
 export async function getServerSideProps() {
   if (process.env.BACKEND_URL === undefined) {
     return {
-      props: { exp: null },
+      props: { projects: [] },
     };
   }
-  // NOTE: This is a temporary solution to get all experiments. This will become
-  // getting experiments by user_id in the future once the login functionalities
-  // are implemented.
-  const url = `${process.env.BACKEND_URL}/exp/all`;
+  // User id is hardcoded to "local_user" for local instance.
+  const url = `${process.env.BACKEND_URL}/project/user/local_user`;
   const res = await fetch(url);
-  const exps = await res.json();
-  return { props: { exps } };
+  const projects = await res.json();
+  return { props: { projects } };
 }

@@ -38,6 +38,25 @@ services:
     depends_on:
       - mongodb
 
+  # eval_backend:
+  #   container_name: loopquest-eval-backend
+  #   image: loopquest-eval-backend
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.eval_backend.dev
+  #   environment:
+  #     # NOTE: This URL is the one exposed by the frontend container.
+  #     - APP_URL=http://localhost:5667
+  #   volumes:
+  #     # NOTE: This should only be used for development.
+  #     # For production, don't copy the source code into the container.
+  #     - ./backend/src:/backend
+  #     - ./loopquest:/sdk/loopquest
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - backend
+
   mongodb:
     container_name: loopquest-mongodb
     image: mongo

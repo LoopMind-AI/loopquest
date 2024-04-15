@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import DatasetDownload from "./dataset_download";
+import EvalProject from "./eval_project";
 
 export default function Navbar() {
   return (
-    <div className="navbar z-50 bg-base-100 sticky top-0">
+    <div className="navbar z-50 bg-base-100 sticky top-0 border">
       <div className="navbar-start">
         <Link
           href="https://loopquest.ai"
@@ -19,7 +21,10 @@ export default function Navbar() {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/datasets">Datasets</Link>
+            <Link href="/envs">Environments</Link>
+          </li>
+          <li>
+            <Link href="/docs">Docs</Link>
           </li>
           <li>
             <Link href="/about">About</Link>
@@ -36,7 +41,15 @@ export default function Navbar() {
         </ul>
       </div>
       <div className="navbar-end justify-end">
-        <div className="label">Local Instance</div>
+        <div className="flex">
+          <div className="p-1">
+            <EvalProject />
+          </div>
+          <div className="p-1">
+            <DatasetDownload />
+          </div>
+        </div>
+        {/* <div className="label">Local Instance</div> */}
       </div>
     </div>
   );

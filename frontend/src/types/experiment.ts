@@ -1,23 +1,14 @@
-type Goal = {
-  text: string;
-  image?: string[];
-  video?: string[];
-  observation?: number | string[];
-};
-
 type ExperimentCreate = {
-  environment_id: string;
-  agent_id: string;
+  project_id: string;
   user_id: string;
+  environment_ids: string[];
+  policy_repo_id?: string;
+  policy_filename?: string;
   num_episodes?: number;
   num_steps?: number;
   name?: string;
-  start_time?: string;
-  sample_time?: string;
   random_seed?: number;
-  environment_configs?: string;
-  agent_configs?: string;
-  goal?: Goal;
+  configs?: string;
 };
 
 type Experiment = ExperimentCreate & {

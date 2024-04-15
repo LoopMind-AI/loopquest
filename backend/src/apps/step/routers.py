@@ -15,7 +15,7 @@ api_router = APIRouter(
 @api_router.post("", response_model=schema.Step)
 async def create_step(request: Request, step: schema.StepCreate):
     env = schema.Step(
-        id=f"{step.experiment_id}-{step.episode}-{step.step}",
+        id=f"{step.experiment_id}-{step.environment_id}-{step.episode}-{step.step}",
         creation_time=datetime.now(),
         update_time=datetime.now(),
         **step.model_dump(),
@@ -80,40 +80,42 @@ async def get_step_rendered_image(
 
 
 @api_router.get("/exp/{exp_id}")
-async def get_experiment(request: Request, exp_id: str):
-    return await db_get_steps_by_experiment(request.app.db, exp_id)
+async def get_experiment_steps(request: Request, exp_id: str):
+    return await db_get_steps_by_exp(request.app.db, exp_id)
 
 
-@api_router.get("/exp/{exp_id}/eps/{episode_id}/step/max")
-async def get_max_step(request: Request, exp_id: str, episode_id: int):
-    return await db_get_max_step(request.app.db, exp_id, episode_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}")
+async def get_experiment_steps_by_env(request: Request, exp_id: str, env_id: str):
+    return await db_get_steps_by_exp_and_env(request.app.db, exp_id, env_id)
 
 
-@api_router.get("/exp/{exp_id}/eps/max")
-async def get_max_episode(request: Request, exp_id: str):
-    return await db_get_max_episode(request.app.db, exp_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}/eps/{episode_id}/step/max")
+async def get_max_step(request: Request, exp_id: str, env_id: str, episode_id: int):
+    return await db_get_max_step(request.app.db, exp_id, env_id, episode_id)
 
 
-@api_router.get("/exp/{exp_id}/reward")
-async def get_rewards(request: Request, exp_id: str):
-    return await db_get_reward(request.app.db, exp_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}/eps/max")
+async def get_max_episode(request: Request, exp_id: str, env_id: str):
+    return await db_get_max_episode(request.app.db, exp_id, env_id)
 
 
-@api_router.get("/exp/{exp_id}/reward/stats")
-async def get_reward_stats(request: Request, exp_id: str):
-    return await db_get_reward_stats(request.app.db, exp_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}/eps/{eps}/reward")
+async def get_rewards(request: Request, exp_id: str, env_id: str, eps: int):
+    return await db_get_reward(request.app.db, exp_id, env_id, eps)
 
 
-@api_router.get("/exp/{exp_id}/obs/{obs_id}")
-async def get_observation(request: Request, exp_id: str, obs_id: int):
-    return await db_get_observation(request.app.db, exp_id, obs_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}/reward/stats")
+async def get_reward_stats(request: Request, exp_id: str, env_id: str):
+    return await db_get_reward_stats(request.app.db, exp_id, env_id)
 
 
-@api_router.get("/exp/{exp_id}/act/{act_id}")
-async def get_action(request: Request, exp_id: str, act_id: int):
-    return await db_get_action(request.app.db, exp_id, act_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}/eps/{eps}/obs{path:path}")
+async def get_observation(
+    request: Request, exp_id: str, env_id: str, eps: int, path: str
+):
+    return await db_get_observation(request.app.db, exp_id, env_id, eps, path)
 
 
-@api_router.get("/exp/{exp_id}/reward")
-async def get_action(request: Request, exp_id: str):
-    return await db_get_reward(request.app.db, exp_id)
+@api_router.get("/exp/{exp_id}/env/{env_id}/eps/{eps}/act{path:path}")
+async def get_action(request: Request, exp_id: str, env_id: str, eps: int, path: str):
+    return await db_get_action(request.app.db, exp_id, env_id, eps, path)

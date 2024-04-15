@@ -1,29 +1,40 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { Experiment } from "@/types/experiment";
+import { Environment } from "@/types/environment";
+import { set } from "react-hook-form";
 
-export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
+export default function StepwiseReplayer({
+  exp,
+  env,
+}: {
+  exp: Experiment;
+  env: Environment;
+}) {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [episode, setEpisode] = useState(0);
-  const [step, setStep] = useState(0);
-  // const [maxEpisode, setMaxEpisode] = useState<number | undefined>(undefined);
+  const [step, setStep] = useState(1);
+  const [maxEpisode, setMaxEpisode] = useState<number | undefined>(undefined);
   const [maxStep, setMaxStep] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    setStep(1);
+    setEpisode(0);
+  }, [env, exp]);
 
-  // useEffect(() => {
-  //   const fetchMaxEpisode = async () => {
-  //     fetch(`/api/step/exp/${exp_id}/eps/max`)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         setMaxEpisode(data);
-  //       })
-  //       .catch((error) => console.log(error));
-  //   };
-  //   fetchMaxEpisode();
-  // }, []);
+  useEffect(() => {
+    const fetchMaxEpisode = async () => {
+      fetch(`/api/step/exp/${exp.id}/env/${env.id}/eps/max`)
+        .then((response) => response.json())
+        .then((data) => {
+          setMaxEpisode(data);
+        })
+        .catch((error) => console.log(error));
+    };
+    fetchMaxEpisode();
+  }, [exp, env]);
 
   useEffect(() => {
     const fetchMaxStep = async () => {
-      fetch(`/api/step/exp/${exp.id}/eps/${episode}/step/max`)
+      fetch(`/api/step/exp/${exp.id}/env/${env.id}/eps/${episode}/step/max`)
         .then((response) => response.json())
         .then((data) => {
           setMaxStep(data);
@@ -31,19 +42,26 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
         .catch((error) => console.log(error));
     };
     fetchMaxStep();
-  }, [episode]);
+  }, [episode, exp, env]);
 
   useEffect(() => {
     const fetchImageUrls = async () => {
-      fetch(`/api/step/${exp.id}-${episode}-${step}/image`)
-        .then((response) => response.json())
+      fetch(`/api/step/${exp.id}-${env.id}-${episode}-${step}/image`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
         .then((data) => {
           setImageUrls(data);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+        });
     };
     fetchImageUrls();
-  }, [episode, step]);
+  }, [episode, step, exp, env]);
 
   return (
     <div className="card h-full max-auto bg-base-100 bordered m-3">
@@ -52,8 +70,7 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
           {exp.name}
           <span className="badge badge-outline badge-neutral">{exp.id}</span>
         </h2>
-        {/* TODO: add episode slider. */}
-        {/* <label className="label">
+        <label className="label">
           <span className="label-text font-bold">Episode {episode}</span>
           <span className="alt-text font-bold">{maxEpisode}</span>
         </label>
@@ -66,14 +83,14 @@ export default function StepwiseReplayer({ exp }: { exp: Experiment }) {
           onInput={(e) => {
             setEpisode(parseInt(e.currentTarget.value));
           }}
-        /> */}
+        />
         <label className="label">
           <span className="label-text font-bold">Step {step}</span>
           <span className="alt-text font-bold">{maxStep}</span>
         </label>
         <input
           type="range"
-          min={0}
+          min={1}
           max={maxStep}
           value={step}
           className="range"

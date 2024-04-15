@@ -32,5 +32,5 @@ export function formatDateTime(isoDateTime: string): string {
   const minutes = ("0" + date.getMinutes()).slice(-2);
   const seconds = ("0" + date.getSeconds()).slice(-2);
 
-  return `${hours}:${minutes}:${seconds} ${month}/${day}/${year}`;
+  return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }

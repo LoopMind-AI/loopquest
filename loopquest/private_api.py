@@ -1,7 +1,7 @@
 import time
 import requests
 import os
-from .utils import update_or_append_env_var
+from .utils import update_or_append_env_var, is_docker_installed
 
 LOCAL_FRONTEND_URL = "http://localhost:5667"
 LOCAL_BACKEND_URL = "http://localhost:8000"
@@ -16,10 +16,7 @@ TOKEN_ENV_VAR_NAME = "LOOPQUEST_USER_TOKEN"
 def is_local_instance_initialized():
     try:
         backend_response = requests.get(LOCAL_BACKEND_URL)
-        frontend_response = requests.get(LOCAL_FRONTEND_URL)
-        return (
-            backend_response.status_code == 200 and frontend_response.status_code == 200
-        )
+        return backend_response.status_code == 200
     except:
         return False
 
@@ -32,6 +29,18 @@ def is_cloud_instance_initialized():
         return True
     except Exception as e:
         return False
+
+
+def start_local_instance():
+    if is_docker_installed():
+        print("Docker is detected. Running 'docker compose up'...")
+        # In a real environment, you would uncomment the next line to run docker-compose up
+        os.system("docker compose up -d")
+    else:
+        raise Exception(
+            "Docker is not installed. Visit the following URL to install Docker then try again: https://docs.docker.com/get-docker/"
+        )
+    wait_for_local_instance_init()
 
 
 def wait_for_local_instance_init():

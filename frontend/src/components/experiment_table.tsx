@@ -1,75 +1,38 @@
 import { Experiment } from "@/types/experiment";
 import { formatDateTime } from "@/utils/time";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useCallback } from "react";
 import { statusBadge } from "@/utils/status_badge";
 
 export default function ExperimentTable({
-  user_id,
-  env_id,
+  exps,
   checkedExps,
   setCheckedExps,
-  fetchExperiments,
 }: {
-  user_id: string;
-  env_id: string;
+  exps: Experiment[];
   checkedExps: Experiment[];
   setCheckedExps: (exps: Experiment[]) => void;
-  fetchExperiments: boolean;
 }) {
-  const [experiments, setExperiments] = useState<Experiment[]>([]);
-  const [loadingExperiments, setLoadingExperiments] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setLoadingExperiments(true);
-    fetch("/api/exp/user/" + user_id + "/env/" + env_id)
-      .then((response) => response.json())
-      .then((data) => {
-        setExperiments(data);
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setLoadingExperiments(false));
-  }, [user_id, env_id, setExperiments, setLoadingExperiments]);
-
-  useEffect(() => {
-    onRefresh();
-  }, [onRefresh, fetchExperiments]);
-
   return (
-    <div>
-      <div className="flex justify-between">
-        <h2 className="card-title flex-1">Experiments</h2>
-        <button
-          className="flex-none btn btn-default bg-base-100 text-lg"
-          onClick={onRefresh}
-        >
-          <FontAwesomeIcon icon={faArrowsRotate} />
-        </button>
-      </div>
-      <div className="overflow-x-auto h-80">
-        <table className="table table-pin-rows">
-          {/* head */}
-          <thead>
-            <tr>
-              <th></th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Create Time</th>
-              <th>Update Time</th>
-              <th>Status</th>
-              <th>Error Message</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loadingExperiments ? (
+    <div className="card bg-base-100">
+      <div className="card-body">
+        <div className="flex justify-between">
+          <h2 className="card-title flex-1">Experiments</h2>
+        </div>
+        <div className="overflow-x-auto h-80">
+          <table className="table table-pin-rows">
+            {/* head */}
+            <thead>
               <tr>
-                <td colSpan={7} className="text-center">
-                  <span className="loading loading-infinity loading-lg"></span>
-                </td>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Create Time</th>
+                <th>Update Time</th>
+                <th>Status</th>
+                <th>Error Message</th>
               </tr>
-            ) : (
-              experiments.map((exp) => (
+            </thead>
+            <tbody>
+              {exps.map((exp) => (
                 <tr key={exp.id}>
                   <th>
                     <label>
@@ -102,9 +65,9 @@ export default function ExperimentTable({
                   </td>
                   <td>
                     <span
-                      className={
-                        "badge " + (exp.status ? statusBadge(exp.status) : "")
-                      }
+                      className={`badge ${
+                        statusBadge[exp.status]
+                      } badge-outline font-medium`}
                     >
                       {exp.status}
                     </span>
@@ -125,10 +88,10 @@ export default function ExperimentTable({
                     )}
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

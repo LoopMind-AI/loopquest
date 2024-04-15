@@ -1,11 +1,9 @@
-import { Experiment } from "@/types/experiment";
 import { useState, useRef, useEffect } from "react";
+import { useDatasetContext } from "@/context/dataset_context";
 
-export default function DatasetDownload({
-  checkedExps,
-}: {
-  checkedExps: Experiment[];
-}) {
+export default function DatasetDownload() {
+  const { expIds, setExpIds } = useDatasetContext();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -22,6 +20,9 @@ export default function DatasetDownload({
     <div>
       <button className="btn btn-neutral" onClick={() => setIsModalOpen(true)}>
         Create Dataset
+        {expIds.length > 0 && (
+          <div className="badge badge-secondary ">{expIds.length}</div>
+        )}
       </button>
       {isModalOpen && (
         <dialog ref={modalRef} className="modal">
@@ -37,7 +38,7 @@ export default function DatasetDownload({
               <pre>
                 <code>
                   ds = load_datasets([
-                  {checkedExps.map((exp) => `"${exp.id}"`).join(", ")}])
+                  {expIds.map((expId) => `"${expId}"`).join(", ")}])
                 </code>
               </pre>
             </div>
@@ -45,6 +46,15 @@ export default function DatasetDownload({
               {/* if there is a button in form, it will close the modal */}
               <button className="btn" onClick={() => setIsModalOpen(false)}>
                 Close
+              </button>
+              <button
+                className="btn"
+                onClick={() => {
+                  setExpIds([]);
+                  setIsModalOpen(false);
+                }}
+              >
+                Clear Datasets
               </button>
             </div>
           </form>

@@ -3,10 +3,7 @@ from fastapi.routing import APIRouter
 from loopquest import schema
 from datetime import datetime
 from .crud import *
-from shortuuid import ShortUUID
-
-ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz"
-gen_short_uuid = lambda: ShortUUID(alphabet=ALPHABET).random(length=8)
+from ..utils import gen_short_uuid
 
 api_router = APIRouter(
     prefix="/exp",
@@ -19,13 +16,13 @@ async def create_experiment(request: Request, experiment: schema.ExperimentCreat
     while True:
         try:
             short_uuid = gen_short_uuid()
-            env = schema.Experiment(
+            exp = schema.Experiment(
                 **experiment.model_dump(),
                 id=short_uuid,
                 creation_time=datetime.now(),
                 update_time=datetime.now()
             )
-            return await db_create_experiment(request.app.db, env)
+            return await db_create_experiment(request.app.db, exp)
         except HTTPException as e:
             if e.status_code == 409:
                 continue
@@ -41,22 +38,28 @@ async def get_all_experiments(request: Request):
 
 @api_router.get("/{id}", response_model=schema.Experiment)
 async def read_experiment(request: Request, id: str):
-    env = await db_get_experiment(request.app.db, id)
-    return env
+    exp = await db_get_experiment(request.app.db, id)
+    return exp
 
 
 @api_router.put("/{id}", response_model=schema.Experiment)
 async def update_experiment(
     request: Request, id: str, experiment: schema.ExperimentUpdate
 ):
-    env = await db_update_experiment(request.app.db, id, experiment)
-    return env
+    exp = await db_update_experiment(request.app.db, id, experiment)
+    return exp
 
 
 @api_router.delete("/{id}")
 async def delete_experiment(request: Request, id: str):
     await db_delete_experiment(request.app.db, id)
     return {"message": "Experiment deleted successfully"}
+
+
+@api_router.get("/env/{env_id}", response_model=list[schema.Experiment])
+async def get_experiment_by_env(request: Request, env_id: str):
+    exps = await db_get_experiment_by_env(request.app.db, env_id)
+    return exps
 
 
 @api_router.get("/user/{user_id}/env/{env_id}", response_model=list[schema.Experiment])

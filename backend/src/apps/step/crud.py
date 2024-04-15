@@ -7,6 +7,7 @@ from pymongo import ASCENDING
 from datetime import datetime
 from aiofiles import open as async_open
 import os
+from ..utils import extract_value_from_space
 
 MEDIA_DIR = "/media"
 
@@ -63,11 +64,17 @@ def get_step_image_path(id: str, image_id: int):
     return os.path.join(MEDIA_DIR, filename)
 
 
-async def db_get_max_step(db, exp_id: str, episode_id: int):
+async def db_get_max_step(db, exp_id: str, env_id: str, episode_id: int):
     collection = await get_step_collection(db)
     results = collection.aggregate(
         [
-            {"$match": {"experiment_id": exp_id, "episode": episode_id}},
+            {
+                "$match": {
+                    "experiment_id": exp_id,
+                    "environment_id": env_id,
+                    "episode": episode_id,
+                }
+            },
             {"$group": {"_id": None, "max_step": {"$max": "$step"}}},
         ]
     )
@@ -75,11 +82,16 @@ async def db_get_max_step(db, exp_id: str, episode_id: int):
     return results[0]["max_step"] if len(results) > 0 else 0
 
 
-async def db_get_max_episode(db, exp_id: str):
+async def db_get_max_episode(db, exp_id: str, env_id: str):
     collection = await get_step_collection(db)
     results = collection.aggregate(
         [
-            {"$match": {"experiment_id": exp_id}},
+            {
+                "$match": {
+                    "experiment_id": exp_id,
+                    "environment_id": env_id,
+                }
+            },
             {"$group": {"_id": None, "max_episode": {"$max": "$episode"}}},
         ]
     )
@@ -87,11 +99,16 @@ async def db_get_max_episode(db, exp_id: str):
     return results[0]["max_episode"] if len(results) > 0 else 0
 
 
-async def db_get_reward_stats(db, exp_id: str):
+async def db_get_reward_stats(db, exp_id: str, env_id: str):
     collection = await get_step_collection(db)
     results = collection.aggregate(
         [
-            {"$match": {"experiment_id": exp_id}},
+            {
+                "$match": {
+                    "experiment_id": exp_id,
+                    "environment_id": env_id,
+                }
+            },
             {"$group": {"_id": "$episode", "sum_reward": {"$sum": "$reward"}}},
             {
                 "$group": {
@@ -106,62 +123,89 @@ async def db_get_reward_stats(db, exp_id: str):
     return results[0]
 
 
-async def db_get_observation(db, exp_id, obs_id):
+async def db_get_observation(db, exp_id, env_id, eps, path):
     collection = await get_step_collection(db)
     results = collection.aggregate(
         [
-            {"$match": {"experiment_id": exp_id}},
+            {
+                "$match": {
+                    "experiment_id": exp_id,
+                    "environment_id": env_id,
+                    "episode": eps,
+                }
+            },
             {
                 "$project": {
                     "_id": 0,
-                    "episode": 1,
                     "step": 1,
-                    "obs": {"$arrayElemAt": ["$observation", obs_id]},
+                    "observation": 1,
                 }
             },
-            {"$sort": {"episode": 1, "step": 1}},
+            {"$sort": {"step": 1}},
         ]
     )
-    results = [res["obs"] async for res in results]
+    results = [
+        extract_value_from_space(res["observation"], path) async for res in results
+    ]
     return results
 
 
-async def db_get_action(db, exp_id, act_id):
+async def db_get_action(db, exp_id, env_id, eps, path):
     collection = await get_step_collection(db)
     results = collection.aggregate(
         [
-            {"$match": {"experiment_id": exp_id}},
+            {
+                "$match": {
+                    "experiment_id": exp_id,
+                    "environment_id": env_id,
+                    "episode": eps,
+                }
+            },
             {
                 "$project": {
                     "_id": 0,
-                    "episode": 1,
                     "step": 1,
-                    "act": {"$arrayElemAt": ["$action", act_id]},
+                    "action": 1,
                 }
             },
-            {"$sort": {"episode": 1, "step": 1}},
+            {"$sort": {"step": 1}},
         ]
     )
-    results = [res["act"] async for res in results]
+    results = [extract_value_from_space(res["action"], path) async for res in results]
     return results
 
 
-async def db_get_reward(db, exp_id):
+async def db_get_reward(db, exp_id, env_id, eps):
     collection = await get_step_collection(db)
     results = collection.find(
-        filter={"experiment_id": exp_id},
+        filter={"experiment_id": exp_id, "environment_id": env_id, "episode": eps},
         projection={"_id": 0, "reward": 1},
-        sort=list({"episode": 1, "step": 1}.items()),
+        sort=list({"step": 1}.items()),
     )
     rewards = [res["reward"] async for res in results]
     return rewards
 
 
-async def db_get_steps_by_experiment(db, exp_id):
+async def db_get_steps_by_exp_and_env(db, exp_id, env_id):
     collection = await get_step_collection(db)
     results = collection.find(
-        filter={"experiment_id": exp_id},
+        filter={
+            "experiment_id": exp_id,
+            "environment_id": env_id,
+        },
         sort=list({"episode": 1, "step": 1}.items()),
+    )
+    steps = [schema.Step(**res) async for res in results]
+    return steps
+
+
+async def db_get_steps_by_exp(db, exp_id):
+    collection = await get_step_collection(db)
+    results = collection.find(
+        filter={
+            "experiment_id": exp_id,
+        },
+        sort=list({"environment_id": 1, "episode": 1, "step": 1}.items()),
     )
     steps = [schema.Step(**res) async for res in results]
     return steps

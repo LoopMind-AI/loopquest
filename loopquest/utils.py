@@ -15,6 +15,8 @@ def cast_to_list(
     x,
 ) -> list[float | int | str]:
     if isinstance(x, np.ndarray):
+        if x.size == 1:
+            return [x.item()]
         return x.tolist()
     elif isinstance(x, np.generic):
         return [x.item()]
@@ -30,12 +32,12 @@ def flatten_and_cast_to_list(space, x):
     return cast_to_list(flattened_x)
 
 
-def jsonize_dict(d):
+def safe_jsonize(d):
     try:
-        json_str = json.dumps(d)
+        json.dumps(d)
     except:
-        json_str = "{'error': 'The dictionary is not JSON serializable.'}"
-    return json_str
+        d = {"error": "The dictionary is not JSON serializable."}
+    return d
 
 
 def pickle_to_str(x):
@@ -57,6 +59,38 @@ def rgb_array_to_image_bytes(rgb_array: np.ndarray):
 def replace_special_chars_with_dash(s):
     # Replace all non-alphanumeric characters with a dash
     return re.sub(r"[^a-zA-Z0-9]", "-", s)
+
+
+def generate_project_name():
+    adjectives = [
+        "Future",
+        "NextGen",
+        "Innovative",
+        "Revolutionary",
+        "Dynamic",
+        "Epic",
+        "Creative",
+        "Ultimate",
+        "Smart",
+        "NewAge",
+    ]
+    nouns = [
+        "Explorer",
+        "Creator",
+        "Vision",
+        "Quest",
+        "Journey",
+        "Horizon",
+        "Pioneer",
+        "Odyssey",
+        "Voyage",
+        "Destination",
+    ]
+
+    adjective = random.choice(adjectives)
+    noun = random.choice(nouns)
+
+    return f"{adjective}-{noun}"
 
 
 def generate_experiment_name():

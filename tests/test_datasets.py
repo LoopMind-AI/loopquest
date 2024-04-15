@@ -1,5 +1,4 @@
 from loopquest.datasets import load_dataset, load_datasets
-import gymnasium
 import loopquest
 from unittest.mock import patch
 
@@ -7,9 +6,7 @@ from unittest.mock import patch
 def run_sim():
     name = "MountainCarContinuous-v0"
     with patch("builtins.input", return_value="2"):
-        env = loopquest.make_env(
-            gymnasium.make(name, render_mode="rgb_array"),
-        )
+        env = loopquest.make_env(name, render_mode="rgb_array")
     obs, info = env.reset()
     for i in range(10):
         action = env.action_space.sample()
@@ -54,4 +51,4 @@ def test_load_datasets():
 
 if __name__ == "__main__":
     test_load_dataset()
-    test_load_datasets()
+    # test_load_datasets()

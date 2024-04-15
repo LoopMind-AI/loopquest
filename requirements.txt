@@ -63,3 +63,5 @@ webencodings>=0.5.1
 xxhash>=3.3.0
 yarl>=1.9.2
 zipp>=3.16.2
+stable-baselines3>=2.2.1
+huggingface-sb3>=3.0

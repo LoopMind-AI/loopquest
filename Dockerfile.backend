@@ -4,6 +4,8 @@ FROM python:3.11.3-bullseye
 COPY backend/src /backend/
 WORKDIR "/backend"
 RUN pip install -r requirements.txt
+RUN pip install "gymnasium-robotics[mujoco-py]"
+RUN pip install "gymnasium[box2d]"
 
 EXPOSE 8000
 

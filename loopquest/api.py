@@ -2,12 +2,14 @@ import os
 import getpass
 import webbrowser
 from .ui import choose_instance
-from .crud import get_cloud_user_id, send_instance_choice_stats
-from .utils import is_docker_installed
+from .crud import (
+    get_cloud_user_id,
+    send_instance_choice_stats,
+)
 from .private_api import (
     is_local_instance_initialized,
     is_cloud_instance_initialized,
-    wait_for_local_instance_init,
+    start_local_instance,
     verify_token,
     save_token_to_env,
     add_env_to_gitignore,
@@ -26,16 +28,12 @@ def init(local: bool | None = None):
 
     # TODO: add an api to record the choice of the instance.
     if local:
-        if is_docker_installed():
-            print("Docker is detected. Running 'docker compose up'...")
-            # In a real environment, you would uncomment the next line to run docker-compose up
-            os.system("docker compose up -d")
-        else:
-            raise Exception(
-                "Docker is not installed. Visit the following URL to install Docker then try again: https://docs.docker.com/get-docker/"
+        if is_local_instance_initialized():
+            print(
+                "Local LoopQuest instance is already initialized. Using the existing instance ..."
             )
-        wait_for_local_instance_init()
-
+        else:
+            start_local_instance()
     else:
         sign_in_url = f"{CLOUD_FRONTEND_URL}/sign-in"
         print(
@@ -69,7 +67,7 @@ def is_initialized():
 def initailize(func):
     def inner(*args, **kwargs):
         if not is_initialized():
-            init()
+            print("Please run `loopquest.init()` first.")
         return func(*args, **kwargs)
 
     return inner
@@ -92,18 +90,10 @@ def get_backend_url():
 @initailize
 def get_user_id():
     if is_local_instance_initialized():
-        return getpass.getuser()
+        # NOTE: hard-coding the local user id, so the frontend can use this user
+        # id to fetch the user data.
+        return "local_user"
     return get_cloud_user_id(get_backend_url())
-
-
-@initailize
-def make_env(env, experiment_name=None, experiment_description=""):
-    from .gym_wrappers import LoopquestGymWrapper
-    from .utils import generate_experiment_name
-
-    if experiment_name is None:
-        experiment_name = generate_experiment_name()
-    return LoopquestGymWrapper(env, experiment_name, experiment_description)
 
 
 def close():

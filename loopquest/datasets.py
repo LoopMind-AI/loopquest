@@ -1,6 +1,7 @@
 from datasets import Dataset
 from .crud import get_steps_by_experiment, get_image_by_url
 from .api import get_backend_url
+from .env.space_utils import recover_from_space_val
 from PIL import Image
 
 
@@ -10,7 +11,11 @@ def dataset_gen(experiment_ids: list[str]):
         # time. Maybe this is already considered by huggingface datasets?
         steps = get_steps_by_experiment(get_backend_url(), experiment_id)
         for step in steps:
-            yield step
+            step_dict = step.model_dump()
+            step_dict["observation"] = recover_from_space_val(step.observation)
+            if step.action is not None:
+                step_dict["action"] = recover_from_space_val(step.action)
+            yield step_dict
 
 
 def to_pilow(examples):

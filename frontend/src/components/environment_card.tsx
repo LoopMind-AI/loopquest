@@ -1,57 +1,65 @@
-import { Environment, VectorSpec } from "@/types/environment";
-import VariableSpec from "@/components/variable_spec";
+import { Environment, VarNode } from "@/types/environment";
+import VarTreeView from "@/components/variable_tree_view";
 import { useState, useEffect } from "react";
 
 export default function EnvironmentCard({ env }: { env: Environment }) {
-  const [envSpecs, setEnvSpecs] = useState<Environment>(env);
-  const [obsSpecs, setObsSpecs] = useState<VectorSpec[]>(
-    env.observation_spec ?? []
+  const [envInfo, setEnvInfo] = useState<Environment>(env);
+  const [obsRootNode, setObsRootNode] = useState<VarNode>(
+    env.observation_metadata
+      ? env.observation_metadata
+      : ({ path: "", tree_path: "", name: "" } as VarNode)
   );
-  const [actSpecs, setActSpecs] = useState<VectorSpec[]>(env.action_spec ?? []);
+  const [actRootNode, setActRootNode] = useState<VarNode>(
+    env.action_metadata
+      ? env.action_metadata
+      : ({ path: "", tree_path: "", name: "" } as VarNode)
+  );
   useEffect(() => {
-    setEnvSpecs((prevState) => {
-      const newState = { ...prevState };
-      newState.observation_spec = obsSpecs;
-      newState.action_spec = actSpecs;
-      return newState;
+    setEnvInfo((prevEnvInfo) => {
+      if (
+        prevEnvInfo.observation_metadata !== obsRootNode ||
+        prevEnvInfo.action_metadata !== actRootNode
+      ) {
+        let newEnvInfo = { ...prevEnvInfo };
+        newEnvInfo.observation_metadata = obsRootNode;
+        newEnvInfo.action_metadata = actRootNode;
+
+        fetch(`/api/env/${env.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newEnvInfo),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            console.log("Environment saved successfully!");
+          })
+          .catch((error) => {
+            console.error("There was a problem saving the environment:", error);
+          });
+        return newEnvInfo;
+      }
+      return prevEnvInfo;
     });
-  }, [obsSpecs, actSpecs]);
-  const onSave = () => {
-    fetch(`/api/env/${env.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(envSpecs),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        console.log("Environment saved successfully!");
-      })
-      .catch((error) => {
-        console.error("There was a problem saving the environment:", error);
-      });
-  };
+  }, [obsRootNode, actRootNode]);
 
   return (
-    <div className="card m-5">
+    <div className="card">
       <div className="card-body">
-        <h2 className="card-title">{envSpecs.name}</h2>
-        <VariableSpec
-          title="Observation Space"
-          specs={obsSpecs}
-          setSpecs={setObsSpecs}
-          onSave={onSave}
+        <VarTreeView
+          title={"Observations"}
+          rootNode={obsRootNode}
+          setRootNode={setObsRootNode}
         />
-        <VariableSpec
-          title="Action Space"
-          specs={actSpecs}
-          setSpecs={setActSpecs}
-          onSave={onSave}
+        <VarTreeView
+          title={"Actions"}
+          rootNode={actRootNode}
+          setRootNode={setActRootNode}
         />
-        <div className="card bg-base-100 max-w m-3">
+        <div className="card bg-base-100 bordered">
           <div className="card-body">
-            <h2 className="card-title">Detailed Env Specs</h2>
+            <h2 className="card-title">Env Specs</h2>
             <p>{env.env_spec}</p>
           </div>
         </div>
