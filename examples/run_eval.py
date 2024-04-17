@@ -51,16 +51,16 @@ import gymnasium as gym
 # )
 
 
-# evaluate_remote_policy(
-#     "jxx123/ppo-LunarLander-v2",
-#     "ppo-LunarLander-v2.zip",
-#     "PPO",
-#     ["LunarLander-v2"],
-#     num_episodes=1,
-#     num_steps_per_episode=5,
-#     project_name="test_lunar_remote",
-#     experiment_configs={"foo": [1, 2, 3], "bar": "hah", "bar": 1.1},
-# )
+evaluate_remote_policy(
+    "jxx123/ppo-LunarLander-v2",
+    "ppo-LunarLander-v2.zip",
+    "PPO",
+    ["LunarLander-v2"],
+    num_episodes=1,
+    num_steps_per_episode=100,
+    project_name="test_lunar_remote",
+    experiment_configs={"foo": [1, 2, 3], "bar": "hah", "bar": 1.1},
+)
 
 # env = gym.make("FetchPickAndPlace-v2", render_mode="human")
 # observation, info = env.reset(seed=42)
@@ -74,31 +74,31 @@ import gymnasium as gym
 # env.close()
 
 
-env = gym.make("FetchPickAndPlace-v2")
+# env = gym.make("FetchPickAndPlace-v2")
 # env = gym.make("LunarLander-v2")
 
 
-class RandomPolicy(BasePolicy):
-    def __init__(self, action_space):
-        self.action_space = action_space
+# class RandomPolicy(BasePolicy):
+#     def __init__(self, action_space):
+#         self.action_space = action_space
 
-    def compute_action(self, observation):
-        return self.action_space.sample()
+#     def compute_action(self, observation):
+#         return self.action_space.sample()
 
 
-policy = RandomPolicy(env.action_space)
+# policy = RandomPolicy(env.action_space)
 
-evaluate_local_policy(
-    policy,
-    [
-        # "MountainCarContinuous-v0"
-        # "LunarLander-v2",
-        "FetchPickAndPlace-v2",
-        "FetchPushDense-v2",
-        "FetchReachDense-v2",
-        "FetchSlideDense-v2",
-    ],
-    num_episodes=1,
-    num_steps_per_episode=100,
-    project_name="test_robotics_new",
-)
+# evaluate_local_policy(
+#     policy,
+#     [
+#         # "MountainCarContinuous-v0"
+#         # "LunarLander-v2",
+#         "FetchPickAndPlace-v2",
+#         "FetchPushDense-v2",
+#         "FetchReachDense-v2",
+#         "FetchSlideDense-v2",
+#     ],
+#     num_episodes=1,
+#     num_steps_per_episode=100,
+#     project_name="test_robotics_new",
+# )

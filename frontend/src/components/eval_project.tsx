@@ -29,11 +29,7 @@ export default function EvalProject() {
       {isModalOpen && (
         <dialog ref={modalRef} className="modal">
           <div className="modal-box w-5/6 max-w-3xl">
-            <EvalForm
-              envIds={envIds}
-              evalRequest={evalRequest}
-              setEvalRequest={setEvalRequest}
-            />
+            <EvalForm envIds={envIds} />
 
             <div className="modal-action">
               {/* if there is a button in form, it will close the modal */}

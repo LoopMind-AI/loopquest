@@ -34,22 +34,8 @@ export default function Instruction() {
                 </pre>
                 <pre>
                   <code className="text-orange-300">
-                    env = loopquest.make_env(
+                    env = loopquest.make_env(&quot;LunarLander-v2&quot;)
                   </code>
-                </pre>
-                <pre>
-                  <code>
-                    {"  "}gymnasium.make(&quot;MountainCarContinuous-v0&quot;,
-                  </code>
-                </pre>
-                <pre>
-                  <code>
-                    {"                 "}render_mode=&quot;rgb_array&quot;)
-                  </code>
-                </pre>
-
-                <pre>
-                  <code className="text-orange-300">)</code>
                 </pre>
                 <pre>
                   <code>obs, info = env.reset()</code>

@@ -1,13 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { EvalRequest } from "@/types/eval";
 
-export default function EvalForm({
-  envIds,
-}: {
-  envIds: string[];
-  evalRequest: EvalRequest;
-  setEvalRequest: React.Dispatch<React.SetStateAction<EvalRequest>>;
-}) {
+export default function EvalForm({ envIds }: { envIds: string[] }) {
   const [evalRequest, setEvalRequest] = useState<EvalRequest>({
     huggingface_repo_id: "",
     huggingface_filename: "",
