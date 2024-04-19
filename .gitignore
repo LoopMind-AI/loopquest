@@ -55,3 +55,5 @@ docs/_build/
 .env
 
 events.out.tfevents.*
+
+experimental/
