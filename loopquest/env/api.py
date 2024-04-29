@@ -1,13 +1,12 @@
 from typing import Any
 from ..crud import get_or_create_bundle
-from ..api import initailize, get_user_id, get_backend_url
+from ..api import get_user_id, get_backend_url, get_frontend_url
 from .gym_wrappers import LoopquestGymWrapper
 from ..utils import generate_experiment_name, generate_project_name
 import gymnasium as gym
 from stable_baselines3.common.vec_env import VecEnv, DummyVecEnv
 
 
-@initailize
 def make_env(
     env_id: str,
     project_name: str = None,
@@ -58,6 +57,10 @@ def make_env(
         experiment_description,
         experiment_configs,
     )
+
+    print(
+        f"Check the results of experiment {experiment.name} at: {get_frontend_url()}/project/{experiment.project_id}?exp_id={experiment.id}"
+    )
     return LoopquestGymWrapper(
         env,
         backend_env_ids[0],
@@ -68,7 +71,6 @@ def make_env(
     )
 
 
-@initailize
 def make_vec_env(
     env_ids: str,
     project_name: str = None,
@@ -97,6 +99,9 @@ def make_vec_env(
         experiment_name,
         experiment_description,
         experiment_configs,
+    )
+    print(
+        f"Check the results of experiment {experiment.name} at: {get_frontend_url()}/project/{experiment.project_id}?exp_id={experiment.id}"
     )
 
     env_fun = lambda env, backend_env_id: LoopquestGymWrapper(

@@ -20,7 +20,7 @@ import numpy as np
 import gymnasium
 from PIL import Image
 from io import BytesIO
-from .private_api import is_local_instance_initialized, TOKEN_ENV_VAR_NAME
+from .private_api import TOKEN_ENV_VAR_NAME
 from dotenv import load_dotenv
 import os
 from requests.exceptions import HTTPError
@@ -29,18 +29,24 @@ load_dotenv()
 
 
 def make_request(method: str, url: str, **kwargs):
-    # TODO: this check might be too expensive. Optimize it.
-    if not is_local_instance_initialized():
-        if TOKEN_ENV_VAR_NAME not in os.environ:
-            raise Exception(
-                f"Please set {TOKEN_ENV_VAR_NAME} environment variable to use LoopQuest cloud service."
-            )
-        headers = kwargs.get("headers", {})
-        headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
-        kwargs["headers"] = headers
+    if TOKEN_ENV_VAR_NAME not in os.environ:
+        raise Exception(
+            f"Please run loopquest.init() before calling other loopquest functions."
+        )
+    headers = kwargs.get("headers", {})
+    headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
+    kwargs["headers"] = headers
 
-    response = requests.request(method, url, **kwargs)
-    response.raise_for_status()
+    try:
+        response = requests.request(method, url, **kwargs)
+        response.raise_for_status()
+    except HTTPError as e:
+        if e.response.status_code == 500:
+            raise Exception(
+                "The HTTP Error might be caused by invalid or expired token. Please run loopquest.init() again to refresh the token. If the problem persists, please contact the LoopQuest team."
+            ) from e
+        else:
+            raise e
     return response
 
 

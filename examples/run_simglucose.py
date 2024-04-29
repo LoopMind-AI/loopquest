@@ -1,4 +1,3 @@
-import gymnasium
 import loopquest
 from gymnasium.envs.registration import register
 
@@ -8,8 +7,10 @@ register(
     kwargs={"patient_name": "adolescent#002"},
 )
 
-experiment_name = "a test"
-env = loopquest.make_env(gymnasium.make("simglucose/adolescent2-v0"))
+loopquest.init()
+env = loopquest.make_env(
+    "simglucose/adolescent2-v0", experiment_name="Exp A", project_name="simglucose_test"
+)
 obs, info = env.reset()
 for i in range(100):
     action = env.action_space.sample()

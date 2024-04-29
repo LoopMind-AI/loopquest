@@ -2,7 +2,7 @@ from .policy.base import BasePolicy
 from typing import Any
 import gymnasium as gym
 from .utils import generate_experiment_name, generate_project_name
-from .api import initailize, get_user_id, get_backend_url, get_frontend_url
+from .api import get_user_id, get_backend_url, get_frontend_url
 from .crud import get_or_create_bundle
 from .env.gym_wrappers import LoopquestGymWrapper
 from .policy.sb3_policy import SB3Policy
@@ -10,7 +10,6 @@ from tqdm import tqdm
 from huggingface_sb3 import load_from_hub
 
 
-@initailize
 def evaluate_local_policy(
     policy: BasePolicy,
     env_ids: list[str],
@@ -32,7 +31,9 @@ def evaluate_local_policy(
     gym_envs = [gym.make(env_id) for env_id in env_ids]
     if all(["rgb_array" in env.metadata.get("render_modes", []) for env in gym_envs]):
         render_mode = "rgb_array"
-    elif all(["rgb_array" in env.metadata.get("render_modes", []) for env in gym_envs]):
+    elif all(
+        ["rgb_array_list" in env.metadata.get("render_modes", []) for env in gym_envs]
+    ):
         render_mode = "rgb_array_list"
     else:
         raise ValueError(
@@ -64,7 +65,7 @@ def evaluate_local_policy(
 
     frontend_url = get_frontend_url()
     print(
-        f"Check the results of experiment {experiment.name} at: {frontend_url}/project/{experiment.project_id}"
+        f"Check the results of experiment {experiment.name} at: {frontend_url}/project/{experiment.project_id}?exp_id={experiment.id}"
     )
 
     # TODO: the dummy for loop can be replaced by parallelism.

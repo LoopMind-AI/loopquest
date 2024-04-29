@@ -52,6 +52,7 @@ class EnvironmentCreate(BaseModel):
     action_metadata: Optional[VarNode] = None
     observation_metadata: Optional[VarNode] = None
     git_repo: Optional[str] = None
+    support_remote_eval: Optional[bool] = False
 
 
 class Environment(EnvironmentCreate):
@@ -106,6 +107,7 @@ class ExperimentCreate(BaseModel):
     name: Optional[str] = None
     random_seed: Optional[int] = None
     configs: Optional[Dict[str, Any]] = None
+    is_public: Optional[bool] = False
 
 
 class ExperimentStatus(str, enum.Enum):

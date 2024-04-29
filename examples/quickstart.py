@@ -1,9 +1,7 @@
-import gymnasium
 import loopquest
 
-env = loopquest.make_env(
-    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
-)
+loopquest.init()
+env = loopquest.make_env("MountainCarContinuous-v0", render_mode="rgb_array")
 obs, info = env.reset()
 for i in range(100):
     action = env.action_space.sample()
