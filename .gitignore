@@ -53,3 +53,7 @@ docs/_build/
 
 # Added by LoopQuest
 .env
+
+events.out.tfevents.*
+
+experimental/

@@ -18,9 +18,65 @@ env = gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
 
 ```python
 import loopquest
+loopquest.init()
 env = loopquest.make_env(
-    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
+    "MountainCarContinuous-v0", render_mode="rgb_array")
 )
+```
+
+- You can also evaluate the local policy or the policy saved in Huggingface directly by specifying number of episodes and number of steps for each episode.
+
+Local Policy evaluation:
+
+```python
+import loopquest
+from loopquest.eval import evaluate_local_policy
+from loopquest.policy.base import BasePolicy
+
+class RandomPolicy(BasePolicy):
+    def __init__(self, action_space):
+        self.action_space = action_space
+
+    def compute_action(self, observation):
+        return self.action_space.sample()
+
+
+policy = RandomPolicy(env.action_space)
+
+evaluate_local_policy(
+    policy,
+    [
+        "FetchPickAndPlace-v2",
+        "FetchPushDense-v2",
+        "FetchReachDense-v2",
+        "FetchSlideDense-v2",
+    ],
+    num_episodes=1,
+    num_steps_per_episode=100,
+    project_name="test_robotics",
+)
+```
+
+Remote Policy evaluation:
+
+```python
+import loopquest
+from loopquest.eval import evaluate_local_policy, evaluate_remote_policy
+
+loopquest.init()
+
+# Cloud evaluation example
+evaluate_remote_policy(
+    "jxx123/ppo-LunarLander-v2",
+    "ppo-LunarLander-v2.zip",
+    "PPO",
+    ["LunarLander-v2"],
+    num_episodes=1,
+    num_steps_per_episode=100,
+    project_name="test_lunar_remote",
+    experiment_configs={"foo": [1, 2, 3], "bar": "hah", "bar": 1.1},
+)
+
 ```
 
 - Directly trainable data for robotics foundation model. Select and download the (observation, action, reward) data with the dataloader interfaces of the most popular deep learning frameworks (e.g. tensorflow, pytorch, huggingface dataset apis). Check [Dataset Quickstart Example](examples/Dataset%20Quickstart.ipynb) for more details.
@@ -81,31 +137,75 @@ cd loopquest
 pip install -e .
 ```
 
-# Usage
+# Quick Start Examples
 
-Run [quickstart script](examples/quickstart.py),
+## Run Local or Remote Eval
 
-```sh
-python examples/quickstart.py
-```
-
-The command prompt will ask you to select local or cloud instance. Pick the instance you want and once the script is up and running. You should see "Check your experiment progress on `http://localhost:5667/experiment/<exp_id>` or `https://open.loopquest.ai/experiment/<exp_id`" (depending on the instance you selected).
-
-**Loopquest Developer Only**: to bring up a development server that reflects your local changes in real time, run
-
-```bash
-bash start_dev_server.sh
-```
-
-# Quick Start Example
+Run [examples/run_local_eval.py](examples/run_local_eval.py).
 
 ```python
-import gymnasium
+import loopquest
+from loopquest.eval import evaluate_local_policy
+from loopquest.policy.base import BasePolicy
+import gymnasium as gym
+
+
+class RandomPolicy(BasePolicy):
+    def __init__(self, action_space):
+        self.action_space = action_space
+
+    def compute_action(self, observation):
+        return self.action_space.sample()
+
+
+# Create this env just to get the action space.
+env = gym.make("FetchPickAndPlace-v2")
+policy = RandomPolicy(env.action_space)
+
+loopquest.init()
+evaluate_local_policy(
+    policy,
+    [
+        "FetchPickAndPlace-v2",
+        "FetchPushDense-v2",
+        "FetchReachDense-v2",
+        "FetchSlideDense-v2",
+    ],
+    num_episodes=1,
+    num_steps_per_episode=100,
+    project_name="test_robotics_new",
+)
+```
+
+Run [examples/run_remote_eval.py](examples/run_remote_eval.py).
+
+```python
+import loopquest
+from loopquest.eval import evaluate_remote_policy
+
+
+loopquest.init()
+evaluate_remote_policy(
+    "jxx123/ppo-LunarLander-v2",
+    "ppo-LunarLander-v2.zip",
+    "PPO",
+    ["LunarLander-v2"],
+    num_episodes=1,
+    num_steps_per_episode=100,
+    project_name="test_lunar_remote",
+    experiment_configs={"foo": [1, 2, 3], "bar": "hah", "bar": 1.1},
+)
+```
+
+## Env Wrapper Example
+
+Run [examples/run_env_wrapper.py](examples/run_env_wrapper.py).
+
+```python
 import loopquest
 
-env = loopquest.make_env(
-    gymnasium.make("MountainCarContinuous-v0", render_mode="rgb_array")
-)
+loopquest.init()
+env = loopquest.make_env("MountainCarContinuous-v0", render_mode="rgb_array")
 obs, info = env.reset()
 for i in range(100):
     action = env.action_space.sample()
@@ -114,5 +214,4 @@ for i in range(100):
     if terminated or truncated:
         break
 env.close()
-
 ```

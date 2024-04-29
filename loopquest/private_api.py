@@ -1,27 +1,15 @@
 import time
 import requests
 import os
-from .utils import update_or_append_env_var
+from .utils import update_or_append_env_var, is_docker_installed
 
-LOCAL_FRONTEND_URL = "http://localhost:5667"
-LOCAL_BACKEND_URL = "http://localhost:8000"
-CLOUD_FRONTEND_URL = "https://open.loopquest.ai"
-CLOUD_BACKEND_URL = "https://open.loopquest.ai/api"
-# For local development
-# CLOUD_FRONTEND_URL = "http://localhost:3000"
-# CLOUD_BACKEND_URL = "http://localhost:3000/api"
+# CLOUD_FRONTEND_URL = "http://localhost:5667"
+# CLOUD_BACKEND_URL = "http://localhost:5667/api"
+
+# For Dev
+CLOUD_FRONTEND_URL = "http://localhost:5667"
+CLOUD_BACKEND_URL = "http://localhost:5667/api"
 TOKEN_ENV_VAR_NAME = "LOOPQUEST_USER_TOKEN"
-
-
-def is_local_instance_initialized():
-    try:
-        backend_response = requests.get(LOCAL_BACKEND_URL)
-        frontend_response = requests.get(LOCAL_FRONTEND_URL)
-        return (
-            backend_response.status_code == 200 and frontend_response.status_code == 200
-        )
-    except:
-        return False
 
 
 def is_cloud_instance_initialized():
@@ -32,26 +20,6 @@ def is_cloud_instance_initialized():
         return True
     except Exception as e:
         return False
-
-
-def wait_for_local_instance_init():
-    start_time = time.time()
-    timeout = 60 * 5  # seconds
-    try:
-        while True:
-            if is_local_instance_initialized():
-                break
-
-            elapsed_time = time.time() - start_time
-            if elapsed_time > timeout:
-                raise Exception(
-                    f"Timeout ({timeout} sec) exceeded while waiting for local instance to initialize."
-                )
-    except KeyboardInterrupt as e:
-        print(
-            "KeyboardInterrupt received. Stop waiting for the local instance to initialize."
-        )
-        return
 
 
 def verify_token(token):
