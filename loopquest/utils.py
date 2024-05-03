@@ -73,6 +73,11 @@ def generate_project_name():
         "Ultimate",
         "Smart",
         "NewAge",
+        "Advanced",
+        "Interactive",
+        "Seamless",
+        "Integrated",
+        "CuttingEdge",
     ]
     nouns = [
         "Explorer",
@@ -85,12 +90,35 @@ def generate_project_name():
         "Odyssey",
         "Voyage",
         "Destination",
+        "Framework",
+        "Engine",
+        "Module",
+        "Navigator",
+        "Builder",
+    ]
+    colors = [
+        "Red",
+        "Blue",
+        "Green",
+        "Yellow",
+        "Orange",
+        "Purple",
+        "Black",
+        "White",
+        "Grey",
+        "Crimson",
+        "Cyan",
+        "Magenta",
+        "Teal",
+        "Silver",
+        "Gold",
     ]
 
     adjective = random.choice(adjectives)
+    color = random.choice(colors)
     noun = random.choice(nouns)
 
-    return f"{adjective}-{noun}"
+    return f"{color}-{adjective}-{noun}"
 
 
 def generate_experiment_name():

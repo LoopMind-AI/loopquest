@@ -6,6 +6,8 @@ from .schema import (
     Step,
     ExperimentUpdate,
     EnvironmentCreate,
+    EnvironmentUpdate,
+    Environment,
 )
 from .env.space_utils import create_var_tree
 
@@ -14,7 +16,6 @@ import requests
 from .utils import (
     rgb_array_to_image_bytes,
     replace_special_chars_with_dash,
-    safe_jsonize,
 )
 import numpy as np
 import gymnasium
@@ -76,6 +77,17 @@ def create_environment(backend_url: str, env: gymnasium.Env, user_id: str) -> st
 def get_environment(backend_url: str, id: str):
     id = replace_special_chars_with_dash(id)
     response = make_request("GET", f"{backend_url}/env/{id}")
+    data = response.json()
+    env = Environment(**data)
+    return env
+
+
+def update_environment(backend_url: str, id: str, environment: EnvironmentUpdate):
+    response = make_request(
+        "PUT",
+        f"{backend_url}/env/{id}",
+        json=environment.model_dump(exclude_none=True),
+    )
     environment = response.json()
     return environment["id"]
 
@@ -84,7 +96,8 @@ def get_or_create_environment(
     backend_url: str, env: gymnasium.Env, user_id: str
 ) -> str:
     try:
-        env_id = get_environment(backend_url, env.spec.id)
+        env = get_environment(backend_url, env.spec.id)
+        env_id = env.id
     except HTTPError as e:
         if e.response.status_code == 404:
             env_id = create_environment(backend_url, env, user_id)
