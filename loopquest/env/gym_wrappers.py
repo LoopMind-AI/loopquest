@@ -2,17 +2,16 @@ from typing import Any
 import gymnasium
 from ..crud import (
     create_step,
+    get_environment,
+    update_environment,
     update_experiment,
     upload_rgb_as_image,
+    get_image_by_url,
 )
-from ..schema import (
-    StepCreate,
-    ExperimentUpdate,
-    ExperimentStatus,
-)
+from ..schema import StepCreate, ExperimentUpdate, ExperimentStatus, EnvironmentUpdate
 from ..utils import safe_jsonize
 from .space_utils import construct_space_val
-from ..api import get_backend_url, get_user_id
+from ..api import get_backend_url
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -25,12 +24,14 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         episode: int = 0,
         use_thread_pool: bool = True,
         max_workers: int = 10,
+        backend_url: str = None,
     ):
         super().__init__(env)
         self.current_step = 0
         self.episode = episode
-        self.backend_url = get_backend_url()
-        self.user_id = get_user_id()
+        if backend_url is None:
+            backend_url = get_backend_url()
+        self.backend_url = backend_url
         self._env_id = env_id
         self._exp_id = exp_id
         self.use_thread_pool = use_thread_pool
@@ -107,9 +108,6 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
             self.exp_id,
             ExperimentUpdate(status=ExperimentStatus.RUNNING),
         )
-        # TODO: #4 support multiple episodes, the frontend is not ready yet.
-        # else:
-        #     self.current_episode += 1
 
         info_jsonable = safe_jsonize(info)
         self.executor.submit(
@@ -133,9 +131,23 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
             self.exp_id,
             ExperimentUpdate(status=ExperimentStatus.FINISHED),
         )
+        self._try_update_env_profile_image()
         self.env.close()
         self.executor.shutdown()
         # TODO: add a callback to compute custom metrics.
+
+    def _try_update_env_profile_image(self):
+        env_info = get_environment(self.backend_url, self.cloud_env_id)
+        env_update = EnvironmentUpdate()
+        if env_info.profile_image is None:
+            step_id = f"{self.exp_id}-{self.cloud_env_id}-0-1"
+            image_url = self.backend_url + f"/step/{step_id}/image/0"
+            try:
+                img = get_image_by_url(image_url)
+                env_update.profile_image = image_url
+            except Exception as e:
+                print(e)
+        update_environment(self.backend_url, self.cloud_env_id, env_update)
 
     def render(self):
         if self.render_mode == "human":

@@ -5,16 +5,12 @@ import gymnasium as gym
 
 
 class RandomPolicy(BasePolicy):
-    def __init__(self, action_space):
-        self.action_space = action_space
 
     def compute_action(self, observation):
         return self.action_space.sample()
 
 
-# Create this env just to get the action space.
-env = gym.make("FetchPickAndPlace-v2")
-policy = RandomPolicy(env.action_space)
+policy = RandomPolicy()
 
 loopquest.init()
 evaluate_local_policy(

@@ -3,12 +3,13 @@ import requests
 import os
 from .utils import update_or_append_env_var, is_docker_installed
 
+
+# For Dev
 # CLOUD_FRONTEND_URL = "http://localhost:5667"
 # CLOUD_BACKEND_URL = "http://localhost:5667/api"
 
-# For Dev
-CLOUD_FRONTEND_URL = "http://localhost:5667"
-CLOUD_BACKEND_URL = "http://localhost:5667/api"
+CLOUD_FRONTEND_URL = "https://www.loopquest.ai"
+CLOUD_BACKEND_URL = "https://www.loopquest.ai/api"
 TOKEN_ENV_VAR_NAME = "LOOPQUEST_USER_TOKEN"
 
 
