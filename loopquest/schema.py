@@ -171,9 +171,10 @@ class StepUpdate(StepCreate):
 
 
 class EvalRequest(BaseModel):
-    huggingface_repo_id: str
-    huggingface_filename: str
-    algorithm_name: str
+    user_id: str
+    huggingface_repo_id: str = ""
+    huggingface_filename: str = ""
+    algorithm_name: str = ""
     env_ids: list[str]
     num_episodes: int = 10
     num_steps_per_episode: int = 1000

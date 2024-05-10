@@ -52,5 +52,7 @@ def get_backend_url():
     return CLOUD_BACKEND_URL
 
 
-def get_user_id():
-    return get_cloud_user_id(get_backend_url())
+def get_user_id(backend_url=None):
+    if backend_url is None:
+        backend_url = get_backend_url()
+    return get_cloud_user_id(backend_url)

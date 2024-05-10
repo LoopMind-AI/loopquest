@@ -3,7 +3,8 @@ from typing import Any
 import gymnasium as gym
 from .utils import generate_experiment_name, generate_project_name
 from .api import get_user_id, get_backend_url, get_frontend_url
-from .crud import get_or_create_bundle
+from .crud import get_or_create_bundle, update_experiment
+from .schema import ExperimentStatus, ExperimentUpdate
 from .env.gym_wrappers import LoopquestGymWrapper
 from .policy.sb3_policy import SB3Policy
 from tqdm import tqdm
@@ -26,7 +27,18 @@ def evaluate_local_policy(
     use_thread_pool: bool = True,
     max_workers: int = 10,
     disable_progress_bar: bool = False,
+    frontend_url: str = None,
+    backend_url: str = None,
+    user_id: str = None,
 ):
+    if backend_url is None:
+        backend_url = get_backend_url()
+
+    if frontend_url is None:
+        frontend_url = get_frontend_url()
+
+    if user_id is None:
+        user_id = get_user_id()
 
     gym_envs = [gym.make(env_id) for env_id in env_ids]
     if all(["rgb_array" in env.metadata.get("render_modes", []) for env in gym_envs]):
@@ -48,8 +60,8 @@ def evaluate_local_policy(
         experiment_name = generate_experiment_name()
 
     backend_env_ids, experiment = get_or_create_bundle(
-        get_backend_url(),
-        get_user_id(),
+        backend_url,
+        user_id,
         gym_envs,
         project_name,
         project_description,
@@ -63,48 +75,61 @@ def evaluate_local_policy(
         num_steps=num_steps_per_episode,
     )
 
-    frontend_url = get_frontend_url()
     print(
         f"Check the results of experiment {experiment.name} at: {frontend_url}/project/{experiment.project_id}?exp_id={experiment.id}"
     )
 
     # TODO: the dummy for loop can be replaced by parallelism.
-    for eps in tqdm(range(num_episodes), desc="Episodes", disable=disable_progress_bar):
-        # NOTE: we did not use vec env because vec env requires all the envs run
-        # to the same time steps, but envs terminate at different time steps.
-        for env_id, backend_env_id in tqdm(
-            zip(env_ids, backend_env_ids),
-            total=len(gym_envs),
-            desc="Environments",
-            leave=False,
-            disable=disable_progress_bar,
+    try:
+        for eps in tqdm(
+            range(num_episodes), desc="Episodes", disable=disable_progress_bar
         ):
-            env = LoopquestGymWrapper(
-                # NOTE: Making env every time to avoid the env state being
-                # changed and renderer does not work as expected etc., but this
-                # might hurt performance.
-                gym.make(env_id, render_mode=render_mode),
-                backend_env_id,
-                experiment.id,
-                episode=eps,
-                use_thread_pool=use_thread_pool,
-                max_workers=max_workers,
-            )
-
-            obs, info = env.reset()
-            for _ in tqdm(
-                range(num_steps_per_episode),
-                desc="Steps",
+            # NOTE: we did not use vec env because vec env requires all the envs run
+            # to the same time steps, but envs terminate at different time steps.
+            for env_id, backend_env_id in tqdm(
+                zip(env_ids, backend_env_ids),
+                total=len(gym_envs),
+                desc="Environments",
                 leave=False,
                 disable=disable_progress_bar,
             ):
-                action = policy.compute_action(obs)
-                obs, reward, terminated, truncated, info = env.step(action)
-                if render_mode in ["rgb_array", "rgb_array_list"]:
-                    env.render()
-                if terminated or truncated:
-                    break
-            env.close()
+                env = LoopquestGymWrapper(
+                    # NOTE: Making env every time to avoid the env state being
+                    # changed and renderer does not work as expected etc., but this
+                    # might hurt performance.
+                    gym.make(env_id, render_mode=render_mode),
+                    backend_env_id,
+                    experiment.id,
+                    episode=eps,
+                    use_thread_pool=use_thread_pool,
+                    max_workers=max_workers,
+                    backend_url=backend_url,
+                )
+                policy.set_action_space(env.action_space)
+                obs, info = env.reset()
+                for _ in tqdm(
+                    range(num_steps_per_episode),
+                    desc="Steps",
+                    leave=False,
+                    disable=disable_progress_bar,
+                ):
+                    action = policy.compute_action(obs)
+                    obs, reward, terminated, truncated, info = env.step(action)
+                    if render_mode in ["rgb_array", "rgb_array_list"]:
+                        env.render()
+                    if terminated or truncated:
+                        break
+                env.close()
+    except Exception as e:
+        update_experiment(
+            backend_url,
+            experiment.id,
+            ExperimentUpdate(
+                status=ExperimentStatus.FAILED,
+                error_message=str(e),
+            ),
+        )
+    return experiment.id, experiment.project_id
 
 
 # Only supports stable baseline3 policies in huggingface for now.
@@ -122,13 +147,17 @@ def evaluate_remote_policy(
     experiment_configs: dict[str, Any] = None,
     use_thread_pool: bool = True,
     max_workers: int = 10,
+    disable_progress_bar: bool = False,
+    frontend_url: str = None,
+    backend_url: str = None,
+    user_id: str = None,
 ):
     checkpoint = load_from_hub(
         repo_id=huggingface_repo_id,
         filename=huggingface_filename,
     )
     policy = SB3Policy.load(checkpoint, algorithm_name)
-    evaluate_local_policy(
+    return evaluate_local_policy(
         policy,
         env_ids,
         num_episodes=num_episodes,
@@ -143,4 +172,8 @@ def evaluate_remote_policy(
         policy_filename=huggingface_filename,
         policy_repo_id=huggingface_repo_id,
         algorithm_name=algorithm_name,
+        disable_progress_bar=disable_progress_bar,
+        frontend_url=frontend_url,
+        backend_url=backend_url,
+        user_id=user_id,
     )

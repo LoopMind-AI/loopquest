@@ -29,14 +29,15 @@ from requests.exceptions import HTTPError
 load_dotenv()
 
 
-def make_request(method: str, url: str, **kwargs):
-    if TOKEN_ENV_VAR_NAME not in os.environ:
-        raise Exception(
-            f"Please run loopquest.init() before calling other loopquest functions."
-        )
-    headers = kwargs.get("headers", {})
-    headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
-    kwargs["headers"] = headers
+def make_request(method: str, url: str, skip_auth_check=False, **kwargs):
+    if not skip_auth_check:
+        if TOKEN_ENV_VAR_NAME not in os.environ:
+            raise Exception(
+                f"Please run loopquest.init() before calling other loopquest functions."
+            )
+        headers = kwargs.get("headers", {})
+        headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
+        kwargs["headers"] = headers
 
     try:
         response = requests.request(method, url, **kwargs)

@@ -11,7 +11,7 @@ from ..crud import (
 from ..schema import StepCreate, ExperimentUpdate, ExperimentStatus, EnvironmentUpdate
 from ..utils import safe_jsonize
 from .space_utils import construct_space_val
-from ..api import get_backend_url, get_user_id
+from ..api import get_backend_url
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -24,12 +24,14 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         episode: int = 0,
         use_thread_pool: bool = True,
         max_workers: int = 10,
+        backend_url: str = None,
     ):
         super().__init__(env)
         self.current_step = 0
         self.episode = episode
-        self.backend_url = get_backend_url()
-        self.user_id = get_user_id()
+        if backend_url is None:
+            backend_url = get_backend_url()
+        self.backend_url = backend_url
         self._env_id = env_id
         self._exp_id = exp_id
         self.use_thread_pool = use_thread_pool
@@ -139,7 +141,7 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         env_update = EnvironmentUpdate()
         if env_info.profile_image is None:
             step_id = f"{self.exp_id}-{self.cloud_env_id}-0-1"
-            image_url = get_backend_url() + f"/step/{step_id}/image/0"
+            image_url = self.backend_url + f"/step/{step_id}/image/0"
             try:
                 img = get_image_by_url(image_url)
                 env_update.profile_image = image_url

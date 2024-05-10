@@ -17,6 +17,8 @@ def make_env(
     episode: int = 0,
     use_thread_pool: bool = True,
     max_workers: int = 10,
+    frontend_url: str = None,
+    backend_url: str = None,
     **kwargs,
 ) -> LoopquestGymWrapper:
     """
@@ -39,6 +41,11 @@ def make_env(
     Raises:
         Exception: If the experiment is already added to another project or if adding the experiment to the project fails.
     """
+    if frontend_url is None:
+        frontend_url = get_frontend_url()
+    if backend_url is None:
+        backend_url = get_backend_url()
+
     env = gym.make(env_id, **kwargs)
 
     if project_name is None:
@@ -48,7 +55,8 @@ def make_env(
         experiment_name = generate_experiment_name()
 
     backend_env_ids, experiment = get_or_create_bundle(
-        get_backend_url(),
+        backend_url,
+        # This will always use the default backend_url
         get_user_id(),
         [env],
         project_name,
@@ -59,7 +67,7 @@ def make_env(
     )
 
     print(
-        f"Check the results of experiment {experiment.name} at: {get_frontend_url()}/project/{experiment.project_id}?exp_id={experiment.id}"
+        f"Check the results of experiment {experiment.name} at: {frontend_url}/project/{experiment.project_id}?exp_id={experiment.id}"
     )
     return LoopquestGymWrapper(
         env,
@@ -68,6 +76,7 @@ def make_env(
         episode=episode,
         use_thread_pool=use_thread_pool,
         max_workers=max_workers,
+        backend_url=backend_url,
     )
 
 
@@ -81,8 +90,16 @@ def make_vec_env(
     episode: int = 0,
     use_thread_pool: bool = True,
     max_workers: int = 10,
+    frontend_url: str = None,
+    backend_url: str = None,
     **kwargs,
 ) -> VecEnv:
+    if frontend_url is None:
+        frontend_url = get_frontend_url()
+
+    if backend_url is None:
+        backend_url = get_backend_url()
+
     gym_envs = [gym.make(env_id, **kwargs) for env_id in env_ids]
 
     if project_name is None:
@@ -91,7 +108,8 @@ def make_vec_env(
     if experiment_name is None:
         experiment_name = generate_experiment_name()
     backend_env_ids, experiment = get_or_create_bundle(
-        get_backend_url(),
+        backend_url,
+        # This will always use the default backend_url
         get_user_id(),
         gym_envs,
         project_name,
@@ -101,7 +119,7 @@ def make_vec_env(
         experiment_configs,
     )
     print(
-        f"Check the results of experiment {experiment.name} at: {get_frontend_url()}/project/{experiment.project_id}?exp_id={experiment.id}"
+        f"Check the results of experiment {experiment.name} at: {frontend_url}/project/{experiment.project_id}?exp_id={experiment.id}"
     )
 
     env_fun = lambda env, backend_env_id: LoopquestGymWrapper(
@@ -111,6 +129,7 @@ def make_vec_env(
         episode=episode,
         use_thread_pool=use_thread_pool,
         max_workers=max_workers,
+        backend_url=backend_url,
     )
     return DummyVecEnv(
         [
