@@ -14,6 +14,8 @@ from .space_utils import construct_space_val
 from ..api import get_backend_url
 from concurrent.futures import ThreadPoolExecutor
 
+BLOB_URL_PREFIX = "https://looquestdev.blob.core.windows.net/step-images"
+
 
 class LoopquestGymWrapper(gymnasium.Wrapper):
     def __init__(
@@ -144,9 +146,9 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
             image_url = self.backend_url + f"/step/{step_id}/image/0"
             try:
                 img = get_image_by_url(image_url)
-                env_update.profile_image = image_url
+                env_update.profile_image = f"{BLOB_URL_PREFIX}/{step_id}-0.jpg"
             except Exception as e:
-                print(e)
+                return
         update_environment(self.backend_url, self.cloud_env_id, env_update)
 
     def render(self):
