@@ -154,6 +154,8 @@ class StepCreate(BaseModel):
     # compatibility.
     done: Optional[bool] = False
     info: Optional[Dict[str, Any]] = None  # JSON string of step info
+    human_score: Optional[int] = None
+    human_annotation: Optional[str] = None
 
 
 class Step(StepCreate):
