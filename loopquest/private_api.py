@@ -1,15 +1,14 @@
-import time
 import requests
 import os
-from .utils import update_or_append_env_var, is_docker_installed
+from .utils import update_or_append_env_var
 
 
 # For Dev
-# CLOUD_FRONTEND_URL = "http://localhost:5667"
-# CLOUD_BACKEND_URL = "http://localhost:5667/api"
+CLOUD_FRONTEND_URL = "http://localhost:3000"
+CLOUD_BACKEND_URL = "http://localhost:3000/api"
 
-CLOUD_FRONTEND_URL = "https://www.loopquest.ai"
-CLOUD_BACKEND_URL = "https://www.loopquest.ai/api"
+# CLOUD_FRONTEND_URL = "https://www.loopquest.ai"
+# CLOUD_BACKEND_URL = "https://www.loopquest.ai/api"
 TOKEN_ENV_VAR_NAME = "LOOPQUEST_USER_TOKEN"
 
 
@@ -26,7 +25,7 @@ def is_cloud_instance_initialized():
 def verify_token(token):
     try:
         response = requests.get(
-            f"{CLOUD_BACKEND_URL}/user_id", headers={"Authorization": f"Bearer {token}"}
+            f"{CLOUD_BACKEND_URL}/user_id", headers={"Authorization": f"{token}"}
         )
         response.raise_for_status()
         return True

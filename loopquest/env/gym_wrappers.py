@@ -6,7 +6,7 @@ from ..crud import (
     update_environment,
     update_experiment,
     upload_rgb_as_image,
-    get_image_by_url,
+    get_image_ids_by_step,
 )
 from ..schema import StepCreate, ExperimentUpdate, ExperimentStatus, EnvironmentUpdate
 from ..utils import safe_jsonize
@@ -141,15 +141,17 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
     def _try_update_env_profile_image(self):
         env_info = get_environment(self.backend_url, self.cloud_env_id)
         env_update = EnvironmentUpdate()
-        if env_info.profile_image is None:
-            step_id = f"{self.exp_id}-{self.cloud_env_id}-0-1"
-            image_url = self.backend_url + f"/step/{step_id}/image/0"
-            try:
-                img = get_image_by_url(image_url)
-                env_update.profile_image = f"{BLOB_URL_PREFIX}/{step_id}-0.jpg"
-            except Exception as e:
-                return
-        update_environment(self.backend_url, self.cloud_env_id, env_update)
+        if env_info.profile_image_id is None:
+            image_ids = get_image_ids_by_step(
+                self.backend_url, f"{self.exp_id}-{self.cloud_env_id}-0-1"
+            )
+            print(image_ids)
+            if len(image_ids) > 0:
+                print("Setting profile image for environment.")
+                env_update.profile_image_id = image_ids[0]
+                update_environment(self.backend_url, self.cloud_env_id, env_update)
+            else:
+                print("No image found for environment.")
 
     def render(self):
         if self.render_mode == "human":

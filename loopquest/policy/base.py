@@ -1,12 +1,12 @@
 from ..typing import TensorStructType
-from gymnasium import Space
+import gymnasium
 
 
 class BasePolicy:
-    action_space: Space
+    env: gymnasium.Env
 
-    def set_action_space(self, action_space: Space):
-        self.action_space = action_space
+    def set_env(self, env: gymnasium.Env):
+        self.env = env
 
     def compute_action(self, observation: TensorStructType) -> TensorStructType:
         raise NotImplementedError

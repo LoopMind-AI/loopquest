@@ -1,5 +1,5 @@
 from datasets import Dataset
-from .crud import get_steps_by_experiment, get_image_by_url
+from .crud import get_steps_by_experiment, get_image_by_id
 from .api import get_backend_url
 from .env.space_utils import recover_from_space_val
 from PIL import Image
@@ -19,10 +19,10 @@ def dataset_gen(experiment_ids: list[str]):
 
 
 def to_pilow(examples):
-    image_urls_across_examples = examples["image_urls"]
+    image_ids_across_examples = examples["image_ids"]
     images = [
-        [get_image_by_url(url) for url in image_urls]
-        for image_urls in image_urls_across_examples
+        [get_image_by_id(get_backend_url(), id) for id in image_ids]
+        for image_ids in image_ids_across_examples
     ]
     examples["images"] = images
     return examples
