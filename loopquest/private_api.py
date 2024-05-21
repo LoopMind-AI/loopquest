@@ -4,11 +4,11 @@ from .utils import update_or_append_env_var
 
 
 # For Dev
-CLOUD_FRONTEND_URL = "http://localhost:3000"
-CLOUD_BACKEND_URL = "http://localhost:3000/api"
+# CLOUD_FRONTEND_URL = "http://localhost:3000"
+# CLOUD_BACKEND_URL = "http://localhost:3000/api"
 
-# CLOUD_FRONTEND_URL = "https://www.loopquest.ai"
-# CLOUD_BACKEND_URL = "https://www.loopquest.ai/api"
+CLOUD_FRONTEND_URL = "https://www.loopquest.ai"
+CLOUD_BACKEND_URL = "https://www.loopquest.ai/api"
 TOKEN_ENV_VAR_NAME = "LOOPQUEST_USER_TOKEN"
 
 
