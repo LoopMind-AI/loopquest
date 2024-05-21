@@ -48,9 +48,11 @@ def evaluate_local_policy(
     ):
         render_mode = "rgb_array_list"
     else:
-        raise ValueError(
-            "All the environments must support rgb_array or rgb_array_list."
-        )
+        # raise ValueError(
+        #     "All the environments must support rgb_array or rgb_array_list."
+        # )
+        render_mode = None
+
     gym_envs = [gym.make(env_id, render_mode=render_mode) for env_id in env_ids]
 
     if project_name is None:
@@ -105,7 +107,7 @@ def evaluate_local_policy(
                     max_workers=max_workers,
                     backend_url=backend_url,
                 )
-                policy.set_action_space(env.action_space)
+                policy.set_env(env)
                 obs, info = env.reset()
                 for _ in tqdm(
                     range(num_steps_per_episode),
@@ -129,6 +131,7 @@ def evaluate_local_policy(
                 error_message=str(e),
             ),
         )
+        raise e
     return experiment.id, experiment.project_id
 
 

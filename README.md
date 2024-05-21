@@ -109,7 +109,7 @@ The data schema will look like
     'done': False,
     'info': '{}',
     'sub_goal': None,
-    'image_urls': ['http://localhost:5667/api/step/34yixvic-0-1/image/0'],
+    'image_ids': ['34yixvic-0-1-0'],
     'images': [<PIL.JpegImagePlugin.JpegImageFile image mode=RGB size=600x400 at 0x7F8D33094450>]
 }
 ```

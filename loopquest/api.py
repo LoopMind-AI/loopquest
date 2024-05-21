@@ -22,9 +22,7 @@ def init():
     )
     webbrowser.open_new(sign_in_url)
     while True:
-        token = getpass.getpass(
-            "Enter your LoopQuest user token (the token expires in 1 hour): "
-        ).strip()
+        token = getpass.getpass("Enter your LoopQuest user token: ").strip()
         if verify_token(token):
             print("Token is verified.")
             break

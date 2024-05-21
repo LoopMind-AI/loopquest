@@ -1,7 +1,6 @@
 import loopquest
 from loopquest.eval import evaluate_local_policy
 from loopquest.policy.base import BasePolicy
-import gymnasium as gym
 
 
 class RandomPolicy(BasePolicy):

@@ -41,12 +41,15 @@ class EnvironmentCreate(BaseModel):
     name: Optional[str] = ""
     # Created by this user.
     user_id: str
-    profile_image: Optional[str] = None
+    profile_image_id: Optional[str] = None
     gym_id: Optional[str] = None
     description: Optional[str] = None
     # JSON string of gym env spec
     # https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
     env_spec: Optional[str] = None
+    namespace: Optional[str] = None
+    version: Optional[int] = None
+    metadata: Optional[Dict[str, Any]] = None
     # Multiple VectorSpecs are used to represent composite spaces, e.g. Dict,
     # Tuple, Sequence etc.
     action_metadata: Optional[VarNode] = None
@@ -147,13 +150,15 @@ class StepCreate(BaseModel):
     reward: Optional[float] = 0.0
     # This is potentially useful to train a policy conditioned on sub goals.
     sub_goal: Optional[Goal] = None
-    image_urls: Optional[List[str]] = []
+    image_ids: Optional[List[str]] = []
     termnated: Optional[bool] = False
     truncated: Optional[bool] = False
     # This is deprecated by Gymnasium, but we still keep it for backward
     # compatibility.
     done: Optional[bool] = False
     info: Optional[Dict[str, Any]] = None  # JSON string of step info
+    human_score: Optional[int] = None
+    human_annotation: Optional[str] = None
 
 
 class Step(StepCreate):

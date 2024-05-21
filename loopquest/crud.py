@@ -36,7 +36,7 @@ def make_request(method: str, url: str, skip_auth_check=False, **kwargs):
                 f"Please run loopquest.init() before calling other loopquest functions."
             )
         headers = kwargs.get("headers", {})
-        headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
+        headers["Authorization"] = f"{os.getenv(TOKEN_ENV_VAR_NAME)}"
         kwargs["headers"] = headers
 
     try:
@@ -62,7 +62,10 @@ def send_instance_choice_stats(backend_url: str, is_local: bool):
 def create_environment(backend_url: str, env: gymnasium.Env, user_id: str) -> str:
     environment = EnvironmentCreate(
         id=replace_special_chars_with_dash(env.spec.id),
-        name=env.spec.id,
+        name=env.spec.name,
+        namespace=env.spec.namespace,
+        version=env.spec.version,
+        metadata=env.metadata,
         gym_id=env.spec.id,
         user_id=user_id,
         env_spec=str(env.spec),
@@ -304,10 +307,16 @@ def get_steps_by_experiment(backend_url: str, experiment_id: str):
     return [Step(**s) for s in steps]
 
 
-def get_image_by_url(image_url: str):
-    response = make_request("GET", image_url)
+def get_image_by_id(backend_url: str, id: str):
+    response = make_request("GET", f"{backend_url}/step/image/{id}")
     image = Image.open(BytesIO(response.content))
     return image
+
+
+def get_image_ids_by_step(backend_url: str, step_id: str):
+    response = make_request("GET", f"{backend_url}/step/{step_id}/image")
+    image_ids = response.json()
+    return image_ids
 
 
 def get_cloud_user_id(backend_url: str):
