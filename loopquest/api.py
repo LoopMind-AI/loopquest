@@ -29,12 +29,7 @@ def init():
         else:
             print("Token is invalid. Please try again.")
 
-    print(
-        "Saving the token to .env file... Please keep your token safe. DO NOT share this token with others!"
-    )
     save_token_to_env(token)
-    print("In case .env file is tracked by git, Adding .env to .gitignore...")
-    add_env_to_gitignore()
     print("LoopQuest is initialized.")
 
 

@@ -1,20 +1,35 @@
 from datasets import Dataset
-from .crud import get_steps_by_experiment, get_image_by_id
+from .crud import (
+    get_steps_by_experiment,
+    get_image_by_id,
+    get_environment,
+    get_experiment,
+)
 from .api import get_backend_url
 from .env.space_utils import recover_from_space_val
-from PIL import Image
 
 
 def dataset_gen(experiment_ids: list[str]):
     for experiment_id in experiment_ids:
         # TODO: this can be further optimized by fetching a batch of steps at a
         # time. Maybe this is already considered by huggingface datasets?
+        exp = get_experiment(get_backend_url(), experiment_id)
+        envs = {}
+        for env_id in exp.environment_ids:
+            envs[env_id] = get_environment(get_backend_url(), env_id)
+
         steps = get_steps_by_experiment(get_backend_url(), experiment_id)
         for step in steps:
             step_dict = step.model_dump()
             step_dict["observation"] = recover_from_space_val(step.observation)
             if step.action is not None:
                 step_dict["action"] = recover_from_space_val(step.action)
+            step_dict["env_metadata"] = envs[step.environment_id].metadata
+            # step_dict["action_metadata"] = envs[step.environment_id].action_metadata
+            # step_dict["observation_metadata"] = envs[
+            #     step.environment_id
+            # ].observation_metadata
+
             yield step_dict
 
 

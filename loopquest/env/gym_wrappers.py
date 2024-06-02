@@ -130,12 +130,12 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
     def close(self):
         self.env.close()
         self.executor.shutdown()
+        self._try_update_env_profile_image()
         update_experiment(
             self.backend_url,
             self.exp_id,
             ExperimentUpdate(status=ExperimentStatus.FINISHED),
         )
-        self._try_update_env_profile_image()
         # TODO: add a callback to compute custom metrics.
 
     def _try_update_env_profile_image(self):

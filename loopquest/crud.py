@@ -22,11 +22,9 @@ import gymnasium
 from PIL import Image
 from io import BytesIO
 from .private_api import TOKEN_ENV_VAR_NAME
-from dotenv import load_dotenv
+
 import os
 from requests.exceptions import HTTPError
-
-load_dotenv()
 
 
 def make_request(method: str, url: str, skip_auth_check=False, **kwargs):
@@ -36,7 +34,7 @@ def make_request(method: str, url: str, skip_auth_check=False, **kwargs):
                 f"Please run loopquest.init() before calling other loopquest functions."
             )
         headers = kwargs.get("headers", {})
-        headers["Authorization"] = f"{os.getenv(TOKEN_ENV_VAR_NAME)}"
+        headers["Authorization"] = f"Bearer {os.getenv(TOKEN_ENV_VAR_NAME)}"
         kwargs["headers"] = headers
 
     try:
