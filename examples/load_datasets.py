@@ -1,6 +1,10 @@
 from loopquest.datasets import load_datasets
+import loopquest
 
-ds = load_datasets(["z1dsuu4g"])
+loopquest.init()
+ds = load_datasets(["3o5jtpj1"])
 
 for record in ds:
-    print(record)
+    print(record["metadata"])
+    print(record["steps"][1])
+    break

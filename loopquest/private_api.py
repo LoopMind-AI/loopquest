@@ -4,8 +4,8 @@ from .utils import update_or_append_env_var
 
 
 # For Dev
-# CLOUD_FRONTEND_URL = "http://localhost:3000"
-# CLOUD_BACKEND_URL = "http://localhost:3000/api"
+DEV_FRONTEND_URL = "http://localhost:3000"
+DEV_BACKEND_URL = "http://localhost:3000/api"
 
 CLOUD_FRONTEND_URL = "https://www.loopquest.ai"
 CLOUD_BACKEND_URL = "https://www.loopquest.ai/api"
@@ -25,7 +25,7 @@ def is_cloud_instance_initialized():
 def verify_token(token):
     try:
         response = requests.get(
-            f"{CLOUD_BACKEND_URL}/user_id", headers={"Authorization": f"{token}"}
+            f"{CLOUD_BACKEND_URL}/user_id", headers={"Authorization": f"Bearer {token}"}
         )
         response.raise_for_status()
         return True
@@ -34,11 +34,6 @@ def verify_token(token):
 
 
 def save_token_to_env(token):
-    update_or_append_env_var(
-        TOKEN_ENV_VAR_NAME,
-        token,
-        comment="WARNING: This token is very sensitive. Do not publish it anywhere!",
-    )
     os.environ[TOKEN_ENV_VAR_NAME] = token
 
 

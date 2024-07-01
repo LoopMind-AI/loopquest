@@ -128,14 +128,14 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
         return observation, info
 
     def close(self):
+        self.env.close()
+        self.executor.shutdown()
+        self._try_update_env_profile_image()
         update_experiment(
             self.backend_url,
             self.exp_id,
             ExperimentUpdate(status=ExperimentStatus.FINISHED),
         )
-        self._try_update_env_profile_image()
-        self.env.close()
-        self.executor.shutdown()
         # TODO: add a callback to compute custom metrics.
 
     def _try_update_env_profile_image(self):
@@ -145,13 +145,9 @@ class LoopquestGymWrapper(gymnasium.Wrapper):
             image_ids = get_image_ids_by_step(
                 self.backend_url, f"{self.exp_id}-{self.cloud_env_id}-0-1"
             )
-            print(image_ids)
             if len(image_ids) > 0:
-                print("Setting profile image for environment.")
                 env_update.profile_image_id = image_ids[0]
                 update_environment(self.backend_url, self.cloud_env_id, env_update)
-            else:
-                print("No image found for environment.")
 
     def render(self):
         if self.render_mode == "human":

@@ -6,17 +6,22 @@ from .private_api import (
     is_cloud_instance_initialized,
     verify_token,
     save_token_to_env,
-    add_env_to_gitignore,
     CLOUD_BACKEND_URL,
     CLOUD_FRONTEND_URL,
+    DEV_FRONTEND_URL,
+    DEV_BACKEND_URL,
 )
 
 
-def init():
+def init(dev=False):
+    if dev:
+        os.environ["IS_DEV_ENV"] = "true"
+    else:
+        os.environ["IS_DEV_ENV"] = "false"
     if is_initialized():
         print("LoopQuest is already initialized.")
         return
-    sign_in_url = f"{CLOUD_FRONTEND_URL}/token"
+    sign_in_url = f"{get_frontend_url()}/token"
     print(
         f"Opening LoopQuest Sign-In page ... \nIf the browser does not open automatically, visit {sign_in_url} manually."
     )
@@ -29,12 +34,7 @@ def init():
         else:
             print("Token is invalid. Please try again.")
 
-    print(
-        "Saving the token to .env file... Please keep your token safe. DO NOT share this token with others!"
-    )
     save_token_to_env(token)
-    print("In case .env file is tracked by git, Adding .env to .gitignore...")
-    add_env_to_gitignore()
     print("LoopQuest is initialized.")
 
 
@@ -43,10 +43,15 @@ def is_initialized():
 
 
 def get_frontend_url():
+    if os.getenv("IS_DEV_ENV") == "true":
+        print("Using Dev Frontend URL")
+        return DEV_FRONTEND_URL
     return CLOUD_FRONTEND_URL
 
 
 def get_backend_url():
+    if os.environ["IS_DEV_ENV"] == "true":
+        return DEV_BACKEND_URL
     return CLOUD_BACKEND_URL
 
 
