@@ -305,6 +305,24 @@ def get_steps_by_experiment(backend_url: str, experiment_id: str):
     return [Step(**s) for s in steps]
 
 
+def get_steps_by_experiment_env_eps(
+    backend_url: str, experiment_id: str, env_id: str, eps: int
+):
+    response = make_request(
+        "GET", f"{backend_url}/step/exp/{experiment_id}/env/{env_id}/eps/{eps}"
+    )
+    steps = response.json()
+    return [Step(**s) for s in steps]
+
+
+def get_max_eps_by_experiment_env(backend_url: str, experiment_id: str, env_id: str):
+    response = make_request(
+        "GET", f"{backend_url}/step/exp/{experiment_id}/env/{env_id}/eps/max"
+    )
+    max_eps = response.json()
+    return max_eps
+
+
 def get_image_by_id(backend_url: str, id: str):
     response = make_request("GET", f"{backend_url}/step/image/{id}")
     image = Image.open(BytesIO(response.content))
