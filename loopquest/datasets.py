@@ -20,7 +20,8 @@ def dataset_gen(experiment_ids: list[str]):
             max_eps = get_max_eps_by_experiment_env(
                 get_backend_url(), experiment_id, env_id
             )
-            for eps in range(max_eps):
+            # max_eps is the index of the last episode, hence need to add 1
+            for eps in range(max_eps + 1):
                 steps = get_steps_by_experiment_env_eps(
                     get_backend_url(), experiment_id, env_id, eps
                 )
